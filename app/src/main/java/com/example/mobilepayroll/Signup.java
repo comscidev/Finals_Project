@@ -45,6 +45,7 @@ public class Signup extends AppCompatActivity {
         EditText confirm_Password = findViewById(R.id.textConfirmPassword);
         Button registerButton = findViewById(R.id.signup_btn);
         TextView login = findViewById(R.id.login_link);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
         registerButton.setOnClickListener(new View.OnClickListener() {
@@ -74,19 +75,23 @@ public class Signup extends AppCompatActivity {
                 }
 
 
-                Auth.createUserWithEmailAndPassword(username, encryptPassword(password)).
+                Auth.createUserWithEmailAndPassword(username, password).
                         addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(Signup.this, "Created Successfully",
-                                Toast.LENGTH_SHORT).show();
+                        mAuth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(Signup.this, "Created Successfully," +
+                                                "Verify your email address", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         userID = Auth.getCurrentUser().getUid();
                         DocumentReference documentReference = db.collection("users").
                                 document(userID);
                         Map<String, Object> userData = new HashMap<>();
                         userData.put("email", username);
-                        userData.put("password", encryptPassword(password));
                         documentReference.set(userData).addOnSuccessListener
                                 (new OnSuccessListener<Void>() {
                             @Override
@@ -105,30 +110,12 @@ public class Signup extends AppCompatActivity {
             });
         }
 
-            public boolean isValidPassword(String password) {
+                     public boolean isValidPassword(String password) {
                 return password.length() >= 6 && password.matches
                         ("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
             }
 
-            public String encryptPassword(String password) {
-                try {
-                    MessageDigest digest = MessageDigest.getInstance("SHA-256");
-                    byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
-                    StringBuilder hexString = new StringBuilder();
-                    for (byte b : hash) {
-                        String hex = Integer.toHexString(0xff & b);
-                        if (hex.length() == 1) hexString.append('0');
-                        hexString.append(hex);
-                    }
-                    return hexString.toString();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
         });
-
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -44,16 +44,6 @@ public class emlist_function extends AppCompatActivity {
             }
         });
 
-
-
-
-
-
-
-
-
-
-
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
