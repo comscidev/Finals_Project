@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Passwords match, login successful
                                 Toast.makeText(MainActivity.this, "Login successful.",
                                         Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(MainActivity.this, EmployeeProfiles.class);
+                                Intent intent = new Intent(MainActivity.this, EmployeeList.class);
                                 startActivity(intent);
                             } else {
                                 // Passwords don't match

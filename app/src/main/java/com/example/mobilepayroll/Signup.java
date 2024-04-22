@@ -70,7 +70,7 @@ public class Signup extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(Signup.this, "Successfully registered.",
                                         Toast.LENGTH_SHORT).show();
-                                Intent success = new Intent(Signup.this, EmployeeProfiles.class);
+                                Intent success = new Intent(Signup.this, EmployeeList.class);
                                 startActivity(success);
                             }
                         })
