@@ -20,7 +20,7 @@
             android:name=".SplashScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".Profilepage_function"
+            android:name=".EmployeeList"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -29,7 +29,7 @@
             android:name=".Signup"
             android:exported="false" />
         <activity
-            android:name=".EmployeeList"
+            android:name=".Profilepage_function"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
