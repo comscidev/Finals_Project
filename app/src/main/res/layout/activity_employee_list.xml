@@ -208,7 +208,7 @@
             <ScrollView
                 android:id="@+id/scrollView"
                 android:layout_width="match_parent"
-                android:layout_height="450dp"
+                android:layout_height="match_parent"
                 android:overScrollMode="never"
                 android:scrollbars="vertical">
 
@@ -216,7 +216,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
@@ -635,21 +634,33 @@
                 </LinearLayout>
             </ScrollView>
 
-            <com.google.android.material.bottomnavigation.BottomNavigationView
-                android:id="@+id/bottomNavigationView"
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/widget"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:background="@drawable/navbar_background"
-                app:itemIconSize="28dp"
-                app:itemIconTint="@drawable/item_selector"
-                app:itemRippleColor="@android:color/transparent"
-                app:labelVisibilityMode="unlabeled"
-                app:menu="@menu/bottom_nav">
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="@+id/scrollView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            </com.google.android.material.bottomnavigation.BottomNavigationView>
-
+                <com.google.android.material.bottomnavigation.BottomNavigationView
+                    android:id="@+id/bottomNavigationView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/navbar_background"
+                    app:itemIconSize="28dp"
+                    app:itemIconTint="@drawable/item_selector"
+                    app:itemRippleColor="@android:color/transparent"
+                    app:labelVisibilityMode="unlabeled"
+                    app:menu="@menu/bottom_nav"
+                    app:layout_constraintTop_toTopOf="@+id/widget"
+                    app:layout_constraintStart_toStartOf="@+id/widget"
+                    app:layout_constraintBottom_toBottomOf="@+id/widget"
+                    app:layout_constraintEnd_toEndOf="@+id/widget"/>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
         </LinearLayout>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
