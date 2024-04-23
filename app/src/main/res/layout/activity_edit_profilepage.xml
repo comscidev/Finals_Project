@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@drawable/profile_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/profile_bg"
-    tools:context=".Profilepage_function">
+    tools:context=".Edit_Profilepage">
+
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageView"
         android:layout_width="100sp"
         android:layout_height="100sp"
-        android:src="@drawable/userprofile"
-        android:scaleType="centerCrop"
         android:layout_marginTop="50dp"
-        app:shapeAppearanceOverlay="@style/roundImageView"
-        app:layout_constraintStart_toStartOf="parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/userprofile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shapeAppearanceOverlay="@style/roundImageView">
 
     </com.google.android.material.imageview.ShapeableImageView>
 
@@ -28,8 +28,8 @@
         android:layout_height="60dp"
         android:layout_marginStart="49dp"
         android:layout_marginTop="48dp"
-        app:layout_constraintStart_toStartOf="@id/imageView2"
-        app:layout_constraintTop_toTopOf="@id/imageView2">
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        app:layout_constraintTop_toTopOf="@id/imageView">
 
         <ImageButton
             android:id="@+id/camera"
@@ -52,7 +52,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/backIcon"
+            android:id="@+id/backIcon2"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/transparent"
@@ -60,104 +60,86 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/baseline_arrow_back_24"/>
+            app:srcCompat="@drawable/baseline_arrow_back_24" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
     <TextView
-        android:id="@+id/titleName"
+        android:id="@+id/titleName2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text=""
         android:hint="Wes Fesley"
+        android:text=""
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/imageView2"
-        app:layout_constraintEnd_toEndOf="@id/imageView2"
-        app:layout_constraintTop_toBottomOf="@id/imageView2"/>
-
-
-    <Button
-        android:id="@+id/EditProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginTop="5dp"
-        android:backgroundTint="@color/darkblue"
-        android:gravity="center"
-        android:text="Edit Profile"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/linearlayout"
-        app:layout_constraintEnd_toEndOf="@+id/linearlayout"
-        app:layout_constraintStart_toStartOf="@id/linearlayout"
-        app:layout_constraintTop_toBottomOf="@id/titleName"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintEnd_toEndOf="@id/imageView"
+        app:layout_constraintStart_toStartOf="@id/imageView"
+        app:layout_constraintTop_toBottomOf="@id/imageView" />
 
     <LinearLayout
-        android:id="@+id/linearlayout"
+        android:id="@+id/linearlayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/white_bg"
         android:orientation="vertical"
         android:padding="10dp"
-        android:background="@drawable/white_bg"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="70dp"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleName">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleName2">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginTop="12dp"
             android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/labelName"
+                android:id="@+id/Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Name"
+                android:textColor="@color/gray"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/gray"/>
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/profile_Name"
+            <EditText
+                android:id="@+id/edit_profile_Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="name"
-                android:textColor="@color/black"
                 android:layout_weight="1"
+                android:hint="name"
                 android:textAlignment="viewEnd"
-                android:textSize="18sp"/>
+                android:textColor="@color/black"
+                android:textSize="18sp" />
         </LinearLayout>
-        
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_margin="10dp"
             android:alpha="0.5"
-            android:background="@color/brand_color"/>
-        
+            android:background="@color/brand_color" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:padding="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
 
             <TextView
-                android:id="@+id/labelEmail"
+                android:id="@+id/Email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -166,8 +148,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/profile_Email"
+            <EditText
+                android:id="@+id/edit_profile_Email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -182,18 +164,18 @@
             android:layout_height="1dp"
             android:layout_margin="10dp"
             android:alpha="0.5"
-            android:background="@color/brand_color"/>
+            android:background="@color/brand_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:padding="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
 
             <TextView
-                android:id="@+id/labelPhone"
+                android:id="@+id/Phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -202,8 +184,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/profile_Phone"
+            <EditText
+                android:id="@+id/edit_profile_Phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -218,17 +200,17 @@
             android:layout_height="1dp"
             android:layout_margin="10dp"
             android:alpha="0.5"
-            android:background="@color/brand_color"/>
+            android:background="@color/brand_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            android:padding="8dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/labelPassword"
+                android:id="@+id/Password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -237,8 +219,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/profile_Password"
+            <EditText
+                android:id="@+id/edit_profile_Password"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -248,43 +230,25 @@
                 android:textSize="18sp" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:layout_marginTop="25dp"
-            android:padding="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/labelNewAccount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Create New Admin Account"
-                android:textAlignment="center"
-                android:textColor="@color/gray"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
     </LinearLayout>
 
     <Button
-        android:id="@+id/logout_btn"
+        android:id="@+id/save_btn"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="5dp"
         android:backgroundTint="@color/brand_color"
         android:gravity="center"
-        android:text="Log Out"
+        android:text="Save Changes"
         android:textColor="@color/black"
         android:textSize="14sp"
         android:textStyle="bold"
         app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/linearlayout"
-        app:layout_constraintStart_toStartOf="@id/linearlayout"
-        app:layout_constraintTop_toBottomOf="@id/linearlayout"
+        app:layout_constraintEnd_toEndOf="@id/linearlayout2"
+        app:layout_constraintStart_toStartOf="@id/linearlayout2"
+        app:layout_constraintTop_toBottomOf="@id/linearlayout2"
         app:layout_constraintVertical_bias="0.864" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
