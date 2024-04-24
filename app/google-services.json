@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "346913984586",
-    "project_id": "project-payroll-49fea",
-    "storage_bucket": "project-payroll-49fea.appspot.com"
+    "project_number": "975579733983",
+    "project_id": "databasepayroll-dcfd5",
+    "storage_bucket": "databasepayroll-dcfd5.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:346913984586:android:6d14448b337fbb5c9916b3",
+        "mobilesdk_app_id": "1:975579733983:android:411f1d97636eeebd92ee6a",
         "android_client_info": {
           "package_name": "com.example.mobilepayroll"
         }
@@ -15,7 +15,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDLYqg9yWzfI69JeGIeAUy6nocsDdpm3cg"
+          "current_key": "AIzaSyA_DjDVAeJbW2gpR9qT72iCXb6Tvbp9uf4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975579733983:android:6b6275e2522010f192ee6a",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_DjDVAeJbW2gpR9qT72iCXb6Tvbp9uf4"
         }
       ],
       "services": {

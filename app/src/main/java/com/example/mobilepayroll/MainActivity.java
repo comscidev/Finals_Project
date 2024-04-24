@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,21 +17,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
+
+    FirebaseAuth Auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FirebaseAuth Auth = FirebaseAuth.getInstance();
+        Auth = FirebaseAuth.getInstance();
         EditText usernameEditText = findViewById(R.id.inputEmail);
         EditText passwordEditText = findViewById(R.id.inputPassword);
         Button loginButton = findViewById(R.id.login_btn);
@@ -52,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             if (Auth.getCurrentUser().isEmailVerified()) {
                                 Intent intent = new Intent(MainActivity.this,
-                                        emlist_function.class);
+                                        EmployeeList.class);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(MainActivity.this, "Verify email first",
@@ -122,5 +127,17 @@ public class MainActivity extends AppCompatActivity {
                 password_reset.create().show();
             }
         });
+
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (currentUser != null){
+            Intent intent = new Intent(MainActivity.this, EmployeeList.class);
+            startActivity(intent);
+        }
+    }
+
 }
