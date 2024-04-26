@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -41,27 +42,7 @@ public class Profilepage_function extends AppCompatActivity {
         Button edit_profile = findViewById(R.id.EditProfile);
         Button signout = findViewById(R.id.logout_btn);
         String userID = Auth.getCurrentUser().getUid();
-
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setSelectedItemId(R.id.bottom_profile);
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId())
-                {
-                    case R.id.bottom_profile:
-                        return  true;
-                    case R.id.bottom_employees:
-                        startActivity(new Intent(getApplicationContext(),EmployeeList.class));
-                        overridePendingTransition(0,0);
-                        return true;
-                }
-
-
-                return false;
-            }
-        });
+        ImageButton back = findViewById(R.id.backIcon);
 
 
         DocumentReference documentReference = db.collection("users").document(userID);
@@ -97,7 +78,13 @@ public class Profilepage_function extends AppCompatActivity {
                 finish();
             }
         });
-
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Profilepage_function.this, EmployeeList.class);
+                startActivity(intent);
+            }
+        });
     }
 
 }

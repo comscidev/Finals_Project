@@ -7,8 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/profile_bg"
-    tools:context=".Profilepage_function"
-    tools:ignore="ExtraText">
+    tools:context=".Profilepage_function">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imageView2"
@@ -143,14 +142,14 @@
                 android:textAlignment="viewEnd"
                 android:textSize="18sp"/>
         </LinearLayout>
-        
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_margin="10dp"
             android:alpha="0.5"
             android:background="@color/brand_color"/>
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -265,24 +264,9 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:cornerRadius="20dp"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
-    app:layout_constraintEnd_toEndOf="@id/linearlayout"
-    app:layout_constraintStart_toStartOf="@id/linearlayout"
-    app:layout_constraintTop_toBottomOf="@id/linearlayout"
-    app:layout_constraintVertical_bias="0.864" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/navbar_background"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:menu="@menu/bottom_nav"
-        app:itemIconSize="28dp"
-        app:itemTextAppearanceActive="@style/Widget.Design.BottomNavigationView"
-        app:labelVisibilityMode="labeled"
-         app:itemIconTint="@drawable/item_selector"
-        app:itemRippleColor="@android:color/transparent" />
+        app:layout_constraintEnd_toEndOf="@id/linearlayout"
+        app:layout_constraintStart_toStartOf="@id/linearlayout"
+        app:layout_constraintTop_toBottomOf="@id/linearlayout"
+        app:layout_constraintVertical_bias="0.864" />
 </androidx.constraintlayout.widget.ConstraintLayout>
