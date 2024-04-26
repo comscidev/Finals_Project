@@ -1,3 +1,4 @@
+
 package com.example.mobilepayroll;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -35,7 +35,7 @@ public class Signup extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-         Auth = FirebaseAuth.getInstance();
+        Auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         EditText user_name = findViewById(R.id.textUsername);
         EditText user_pass = findViewById(R.id.textPassword);
@@ -111,7 +111,6 @@ public class Signup extends AppCompatActivity {
                 return password.length() >= 6 && password.matches
                         ("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
             }
-
         });
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -123,4 +122,3 @@ public class Signup extends AppCompatActivity {
         });
     }
 }
-

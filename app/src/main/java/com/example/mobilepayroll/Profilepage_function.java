@@ -2,17 +2,20 @@ package com.example.mobilepayroll;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -22,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profilepage_function extends AppCompatActivity {
-
+    BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,27 @@ public class Profilepage_function extends AppCompatActivity {
         Button edit_profile = findViewById(R.id.EditProfile);
         Button signout = findViewById(R.id.logout_btn);
         String userID = Auth.getCurrentUser().getUid();
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.bottom_profile);
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId())
+                {
+                    case R.id.bottom_profile:
+                        return  true;
+                    case R.id.bottom_employees:
+                        startActivity(new Intent(getApplicationContext(),EmployeeList.class));
+                        overridePendingTransition(0,0);
+                        return true;
+                }
+
+
+                return false;
+            }
+        });
 
 
         DocumentReference documentReference = db.collection("users").document(userID);
