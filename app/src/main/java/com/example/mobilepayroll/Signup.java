@@ -75,37 +75,41 @@ public class Signup extends AppCompatActivity {
                 Auth.createUserWithEmailAndPassword(username, password).
                         addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    mAuth.getCurrentUser().sendEmailVerification().
-                                            addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task){
-                                                    Toast.makeText(Signup.this, "Created Successfully,"+
-                                                            "Verify your email address", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                    userID = Auth.getCurrentUser().getUid();
-                                    DocumentReference documentReference = db.collection("users").
-                                            document(userID);
-                                    Map<String, Object> userData = new HashMap<>();
-                                    userData.put("email", username);
-                                    userData.put("password", password);
-                                    documentReference.set(userData).addOnSuccessListener
-                                            (new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Log.d("TAG", "OnSuccess: Created Successfully"+ userID);
-                                                }
-                                            });
-                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                } else {
-                                    Toast.makeText(Signup.this, "Error Occurred" +
-                                                    task.getException().getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        mAuth.getCurrentUser().sendEmailVerification().
+                                addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task){
+                                        Toast.makeText(Signup.this, "Created Successfully,"+
+                                                "Verify your email address", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+                        userID = Auth.getCurrentUser().getUid();
+                        DocumentReference documentReference = db.collection("users").
+                                document(userID);
+                        Map<String, Object> userData = new HashMap<>();
+                        userData.put("email", username);
+                        userData.put("password", password);
+                        documentReference.set(userData).addOnSuccessListener
+                                (new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+
+                                    }
+                                });
+                        Intent intent = new Intent(Signup.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(Signup.this, "Error Occurred" +
+                                        task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+
                         });
+
             }
             public boolean isValidPassword(String password) {
                 return password.length() >= 6 && password.matches

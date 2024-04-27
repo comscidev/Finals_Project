@@ -67,9 +67,9 @@ public class Edit_Profilepage extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newName = name.getText().toString().trim();
-                String newEmail = change_email.getText().toString().trim();
-                String newPhone = phone.getText().toString().trim();
+                String newName = name.getText().toString();
+                String newEmail = change_email.getText().toString();
+                String newPhone = phone.getText().toString();
 
                 if (TextUtils.isEmpty(newEmail)) {
                     change_email.setError("Email is required.");
@@ -93,51 +93,65 @@ public class Edit_Profilepage extends AppCompatActivity {
 
                 FirebaseUser user = Auth.getCurrentUser();
                 if (user != null) {
-                    user.updateEmail(newEmail)
+                    // Update email if it has changed
+                    if (!newEmail.equals(user.getEmail())) {
+                        user.verifyBeforeUpdateEmail(newEmail)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // Send email verification
+                                        user.sendEmailVerification()
+                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void aVoid) {
+                                                        Toast.makeText(Edit_Profilepage.this,
+                                                                "A verification email has been sent to your new email address.",
+                                                                Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(Edit_Profilepage.this,
+                                                "Failed to update email: " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put("fullname", newName);
+                    userData.put("email", newEmail);
+                    userData.put("phone", newPhone);
+
+                    documentReference.update(userData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Map<String, Object> userData = new HashMap<>();
-                                    userData.put("fullname", newName);
-                                    userData.put("email", newEmail);
-                                    userData.put("phone", newPhone);
-
-                                    documentReference.update(userData)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(Edit_Profilepage.this,
-                                                            "Profile updated successfully!",
-                                                            Toast.LENGTH_SHORT).show();
-                                                    Intent intent = new Intent(Edit_Profilepage.this,
-                                                            Profilepage_function.class);
-                                                    startActivity(intent);
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(Edit_Profilepage.this,
-                                                            "Failed to update profile: " + e.getMessage(),
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
+                                    Toast.makeText(Edit_Profilepage.this,
+                                            "Profile updated successfully!",
+                                            Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(Edit_Profilepage.this,
+                                            Profilepage_function.class);
+                                    startActivity(intent);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(Edit_Profilepage.this,
-                                            "Failed to update email: " + e.getMessage(),
+                                            "Failed to update profile: " + e.getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
             }
         });
-    }
 
-    private boolean isValidEmail(String email) {
+    }
+        private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
