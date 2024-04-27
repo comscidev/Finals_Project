@@ -1,10 +1,10 @@
 package com.example.mobilepayroll;
 
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,7 +14,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -60,6 +59,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                     name.setText(documentSnapshot.getString("fullname"));
                     change_email.setText(documentSnapshot.getString("email"));
                     phone.setText(documentSnapshot.getString("phone"));
+                    change_pass.setText(documentSnapshot.getString("password"));
                 }
             }
         });
@@ -70,6 +70,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                 String newName = name.getText().toString();
                 String newEmail = change_email.getText().toString();
                 String newPhone = phone.getText().toString();
+                String newPassword = change_pass.getText().toString();
 
                 if (TextUtils.isEmpty(newEmail)) {
                     change_email.setError("Email is required.");
@@ -91,22 +92,47 @@ public class Edit_Profilepage extends AppCompatActivity {
                     return;
                 }
 
-                FirebaseUser user = Auth.getCurrentUser();
-                if (user != null) {
-                    // Update email if it has changed
-                    if (!newEmail.equals(user.getEmail())) {
-                        user.verifyBeforeUpdateEmail(newEmail)
+                if (isValidPassword(newPassword)) {
+                    FirebaseUser user = Auth.getCurrentUser();
+                    if (user != null) {
+                        if (!newEmail.equals(user.getEmail())) {
+                            user.verifyBeforeUpdateEmail(newEmail)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            user.sendEmailVerification()
+                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            Toast.makeText(Edit_Profilepage.this,
+                                                                    "A verification email has been sent to your new email address.",
+                                                                    Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(Edit_Profilepage.this,
+                                                    "Failed to update email: " + e.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                        }
+
+                        user.updatePassword(newPassword)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
-                                        // Send email verification
-                                        user.sendEmailVerification()
+                                        Toast.makeText(Edit_Profilepage.this,
+                                                "Password changed successfully!",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        documentReference.update("password", newPassword)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        Toast.makeText(Edit_Profilepage.this,
-                                                                "A verification email has been sent to your new email address.",
-                                                                Toast.LENGTH_LONG).show();
                                                     }
                                                 });
                                     }
@@ -115,16 +141,16 @@ public class Edit_Profilepage extends AppCompatActivity {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         Toast.makeText(Edit_Profilepage.this,
-                                                "Failed to update email: " + e.getMessage(),
+                                                "Failed to change password: " + e.getMessage(),
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     }
-
                     Map<String, Object> userData = new HashMap<>();
                     userData.put("fullname", newName);
                     userData.put("email", newEmail);
                     userData.put("phone", newPhone);
+                    userData.put("password", newPassword);
 
                     documentReference.update(userData)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -146,12 +172,22 @@ public class Edit_Profilepage extends AppCompatActivity {
                                             Toast.LENGTH_SHORT).show();
                                 }
                             });
+                } else {
+                    Toast.makeText(Edit_Profilepage.this,
+                            "Invalid password format. Password must be at least 6 characters long" +
+                                    " and contain both letters and numbers.",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
-        private boolean isValidEmail(String email) {
+
+    private boolean isValidPassword(String password) {
+        return password.length() >= 6 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
+    }
+
+    private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
