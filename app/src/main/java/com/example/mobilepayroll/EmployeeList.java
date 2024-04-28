@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.TextureView;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -35,6 +37,7 @@ public class EmployeeList extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth Auth = FirebaseAuth.getInstance();
         String userID = Auth.getCurrentUser().getUid();
+        ImageButton add_employee = findViewById(R.id.add_employee_btn);
 
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -64,5 +67,13 @@ public class EmployeeList extends AppCompatActivity {
                 }
             }
         });
+    add_employee.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(EmployeeList.this, AddEmployeeActivity.class);
+            startActivity(intent);
+        }
+    });
+
     }
 }
