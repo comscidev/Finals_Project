@@ -41,16 +41,15 @@ public class Edit_Profilepage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profilepage);
-        EditText name = findViewById(R.id.edit_profile_Name);
-        EditText change_email = findViewById(R.id.edit_profile_Email);
-        EditText phone = findViewById(R.id.edit_profile_Phone);
-        EditText change_pass = findViewById(R.id.edit_profile_Password);
-        TextView fname = findViewById(R.id.titleName2);
+        EditText Profile_Name = findViewById(R.id.edit_profile_Name);
+        EditText Change_AdminEmail = findViewById(R.id.edit_profile_Email);
+        EditText Change_AdminPassword = findViewById(R.id.edit_profile_Password);
+        EditText Change_ProfilePositon = findViewById(R.id.edit_profile_Job);
         Auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         userID = Auth.getCurrentUser().getUid();
-        Button save = findViewById(R.id.save_btn);
-        ImageButton back = findViewById(R.id.backIcon2);
+        Button SaveEditButton = findViewById(R.id.save_btn);
+        ImageButton BackButton = findViewById(R.id.backIcon2);
 
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -59,31 +58,28 @@ public class Edit_Profilepage extends AppCompatActivity {
                                 @Nullable FirebaseFirestoreException error) {
                 if (snapshot != null) {
                     documentSnapshot = snapshot;
-                    fname.setText(snapshot.getString("fullname"));
-                    name.setText(snapshot.getString("fullname"));
-                    change_email.setText(snapshot.getString("email"));
-                    phone.setText(snapshot.getString("phone"));
-                    change_pass.setText(snapshot.getString("password"));
+                    Profile_Name.setText(snapshot.getString("fullname"));
+                    Change_AdminEmail.setText(snapshot.getString("email"));
+                    Change_ProfilePositon.setText(snapshot.getString("position"));
                 }
             }
         });
-
-        save.setOnClickListener(new View.OnClickListener() {
+        SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newName = name.getText().toString();
-                String newEmail = change_email.getText().toString();
-                String newPhone = phone.getText().toString();
-                String newPassword = change_pass.getText().toString();
+                String GetNewName = Profile_Name.getText().toString();
+                String GetNewEmail =Change_AdminEmail.getText().toString();
+                String GetNewPassword = Change_AdminPassword.getText().toString();
+                String GetNewPosition = Change_ProfilePositon.getText().toString();
 
-                boolean emailChanged = !newEmail.equals(documentSnapshot.getString("email"));
-                boolean phoneChanged = !newPhone.equals(documentSnapshot.getString("phone"));
+                boolean emailChanged = !GetNewEmail.equals(documentSnapshot.getString("email"));
 
                 if (emailChanged) {
-                    if (isValidEmail(newEmail)) {
+                    if (isValidEmail(GetNewEmail
+                    )) {
                         FirebaseUser user = Auth.getCurrentUser();
                         if (user != null) {
-                            user.verifyBeforeUpdateEmail(newEmail)
+                            user.verifyBeforeUpdateEmail(GetNewEmail)
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
@@ -107,7 +103,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                                         }
                                     });
                         }
-                        documentReference.update("email", newEmail)
+                        documentReference.update("email", GetNewEmail)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -125,47 +121,23 @@ public class Edit_Profilepage extends AppCompatActivity {
                                     }
                                 });
                     } else {
-                        change_email.setError("Invalid email format.");
+                        Change_AdminEmail.setError("Invalid email format.");
                         return;
                     }
                 }
 
-                if (phoneChanged) {
-                    if (TextUtils.isDigitsOnly(newPhone)) {
-                        documentReference.update("phone", newPhone)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Phone number updated successfully!",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Failed to update phone number: " + e.getMessage(),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    } else {
-                        phone.setError("Invalid phone number format. Please enter only numbers.");
-                        return;
-                    }
-                }
 
-                if (!TextUtils.isEmpty(newPassword) && isValidPassword(newPassword)) {
+                if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
                     if (user != null) {
-                        user.updatePassword(newPassword)
+                        user.updatePassword(GetNewPassword)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(Edit_Profilepage.this,
                                                 "Password changed successfully!",
                                                 Toast.LENGTH_SHORT).show();
-                                        documentReference.update("password", newPassword)
+                                        documentReference.update("password", GetNewPassword)
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
@@ -185,13 +157,13 @@ public class Edit_Profilepage extends AppCompatActivity {
                     }
                 }
 
-                if (!newName.equals(documentSnapshot.getString("fullname"))) {
-                    documentReference.update("fullname", newName)
+                if (!GetNewPosition.equals(documentSnapshot.getString("position"))) {
+                    documentReference.update("position", GetNewPosition)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(Edit_Profilepage.this,
-                                            "Name updated successfully!",
+                                            "Position updated successfully!",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             })
@@ -199,23 +171,23 @@ public class Edit_Profilepage extends AppCompatActivity {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
                                     Toast.makeText(Edit_Profilepage.this,
-                                            "Failed to update name: " + e.getMessage(),
+                                            "Failed to update : " + e.getMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
 
 
-                Intent intent = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-                startActivity(intent);
+                Intent GotoProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(GotoProfilePageFunction);
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
+        BackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-                startActivity(intent);
+                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(BackToProfilePageFunction);
             }
         });
     }

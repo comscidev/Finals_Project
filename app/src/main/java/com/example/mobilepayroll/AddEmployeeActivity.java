@@ -21,8 +21,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuthSettings;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,11 +44,11 @@ public class AddEmployeeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_employee);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        EditText fname = findViewById(R.id.add_fname);
-        EditText eemail = findViewById(R.id.add_email);
-        EditText phone = findViewById(R.id.add_phone);
-        EditText Designation = findViewById(R.id.add_designation);
-        EditText basicpay = findViewById(R.id.add_basicpay);
+        EditText Emp_FullName = findViewById(R.id.add_fname);
+        EditText Emp_Email = findViewById(R.id.add_email);
+        EditText Emp_phone = findViewById(R.id.add_phone);
+        EditText Emp_Department = findViewById(R.id.add_designation);
+        EditText Emp_BasicPay = findViewById(R.id.add_basicpay);
         Button button = findViewById(R.id.next_btn);
         ImageButton cancel = findViewById(R.id.cancel_button);
 
@@ -61,46 +63,44 @@ public class AddEmployeeActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String fullname = fname.getText().toString();
-                String email = eemail.getText().toString();
-                String Phone_num = phone.getText().toString();
-                String Desig = Designation.getText().toString();
-                String BasicPay = basicpay.getText().toString();
+                String GetFullName = Emp_FullName.getText().toString();
+                String GetEmail = Emp_Email.getText().toString();
+                String GetPhoneNumber = Emp_phone.getText().toString();
+                String GetDepartment =Emp_Department.getText().toString();
+                String GetBasicPay = Emp_BasicPay.getText().toString();
 
-                if (fullname.isEmpty() || email.isEmpty() || Desig.isEmpty() || BasicPay.isEmpty() || Phone_num.isEmpty()) {
+                if (GetFullName.isEmpty() || GetEmail.isEmpty() || GetDepartment.isEmpty() || GetBasicPay.isEmpty() || GetPhoneNumber.isEmpty()) {
                     Toast.makeText(AddEmployeeActivity.this, "Please Fill all the Fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (!TextUtils.isDigitsOnly(Phone_num)) {
+                if (!TextUtils.isDigitsOnly(GetPhoneNumber)) {
                     Toast.makeText(AddEmployeeActivity.this, "Invalid phone number format. Please enter only numbers", Toast.LENGTH_SHORT).show();
 
                     return;
                 }
-                if (!TextUtils.isDigitsOnly(BasicPay)){
-                    Toast.makeText(AddEmployeeActivity.this, "Invalid Basicpay format. Please enter only numbers", Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isDigitsOnly(GetBasicPay)){
+                    Toast.makeText(AddEmployeeActivity.this, "Invalid Basic pay format. Please enter only numbers", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Map<String, Object> user = new HashMap<>();
-                user.put("Fullname", fullname);
-                user.put("Email", email);
-                user.put("Phone number", Phone_num);
-                user.put("Designation", Desig);
-                user.put("Basic Pay", BasicPay);
+                user.put("Fullname", GetFullName);
+                user.put("Email", GetEmail);
+                user.put("Phone number", GetPhoneNumber);
+                user.put("Designation", GetDepartment);
+                user.put("Basic Pay", GetBasicPay);
 
-                db.collection("employee")
-                        .add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                db.collection("employee").document(GetEmail)
+                        .set(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                Toast.makeText(AddEmployeeActivity.this, "Employee Success added", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
-                                startActivity(intent);
-                            }
-
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(AddEmployeeActivity.this, "Failed Registration", Toast.LENGTH_SHORT).show();
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(AddEmployeeActivity.this, "New Employee Added", Toast.LENGTH_SHORT).show();
+                                    Intent GotoAddEmployeePicture = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
+                                    startActivity(GotoAddEmployeePicture);
+                                }else{
+                                    Toast.makeText(AddEmployeeActivity.this, "Adding Employee Failed", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
 

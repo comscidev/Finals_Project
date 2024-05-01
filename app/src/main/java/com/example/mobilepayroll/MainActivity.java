@@ -37,23 +37,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Auth = FirebaseAuth.getInstance();
-        EditText usernameEditText = findViewById(R.id.inputEmail);
-        EditText passwordEditText = findViewById(R.id.inputPassword);
+        EditText usernameEditText = findViewById(R.id.loginEmail);
+        EditText passwordEditText = findViewById(R.id.loginPassword);
         Button loginButton = findViewById(R.id.login_btn);
-        TextView signup = findViewById(R.id.signup_link);
-        TextView frgt_pass = findViewById(R.id.ForgotPass);
+        TextView SignUpPage = findViewById(R.id.signup_link);
+        TextView Forgot_Password = findViewById(R.id.ForgotPass);
 
         loginButton.setOnClickListener(v -> {
-            String email = usernameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            String getEmail = usernameEditText.getText().toString();
+            String getPassword = passwordEditText.getText().toString();
 
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty((password))) {
+            if (TextUtils.isEmpty(getEmail) || TextUtils.isEmpty((getPassword))) {
                 Toast.makeText(MainActivity.this, "Please fill in all fields",
                         Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            Auth.signInWithEmailAndPassword(email, password)
+            Auth.signInWithEmailAndPassword(getEmail, getPassword)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             if (Auth.getCurrentUser().isEmailVerified()) {
@@ -81,27 +81,27 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        signup.setOnClickListener(new View.OnClickListener() {
+        SignUpPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Signup.class);
-                startActivity(intent);
+                Intent GotoSignUpPage = new Intent(MainActivity.this, Signup.class);
+                startActivity(GotoSignUpPage);
             }
         });
 
-        frgt_pass.setOnClickListener(new View.OnClickListener() {
+        Forgot_Password.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText resetMail = new EditText(v.getContext());
+                EditText ResetPassword = new EditText(v.getContext());
                 AlertDialog.Builder password_reset = new AlertDialog.Builder(v.getContext());
                 password_reset.setTitle("Reset Password");
                 password_reset.setTitle("Enter email to reset password");
-                password_reset.setView(resetMail);
+                password_reset.setView(ResetPassword);
                 password_reset.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String email = resetMail.getText().toString();
-                        Auth.sendPasswordResetEmail(email).addOnSuccessListener(
+                        String NewPassword = ResetPassword.getText().toString();
+                        Auth.sendPasswordResetEmail(NewPassword).addOnSuccessListener(
                                 new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
@@ -136,8 +136,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         if (currentUser != null){
-            Intent intent = new Intent(MainActivity.this, EmployeeList.class);
-            startActivity(intent);
+            Intent GotoEmployeeList = new Intent(MainActivity.this, EmployeeList.class);
+            startActivity(GotoEmployeeList);
         }
     }
 

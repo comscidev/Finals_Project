@@ -33,7 +33,7 @@ public class EmployeeList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee_list);
-        TextView display_name = findViewById(R.id.current_user);
+        TextView Display_FullName = findViewById(R.id.current_user);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth Auth = FirebaseAuth.getInstance();
         String userID = Auth.getCurrentUser().getUid();
@@ -45,7 +45,7 @@ public class EmployeeList extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
                                 @Nullable FirebaseFirestoreException error) {
                 if (documentSnapshot != null) {
-                    display_name.setText(documentSnapshot.getString("fullname"));
+                    Display_FullName.setText(documentSnapshot.getString("fullname"));
 
                     bottomNavigationView = findViewById(R.id.bottomNavigationView);
                     bottomNavigationView.setSelectedItemId(R.id.bottom_employees);
@@ -70,8 +70,8 @@ public class EmployeeList extends AppCompatActivity {
     add_employee.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(EmployeeList.this, AddEmployeeActivity.class);
-            startActivity(intent);
+            Intent GoToAddEmployeeList = new Intent(EmployeeList.this, AddEmployeeActivity.class);
+            startActivity(GoToAddEmployeeList);
         }
     });
 
