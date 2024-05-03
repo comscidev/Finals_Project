@@ -9,14 +9,11 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -40,15 +37,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
         EditText empDepartment = findViewById(R.id.add_designation);
         EditText empBasicPay = findViewById(R.id.add_basicpay);
         Button button = findViewById(R.id.next_btn);
-        ImageButton cancel = findViewById(R.id.cancel_button);
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AddEmployeeActivity.this, EmployeeList.class);
-                startActivity(intent);
-            }
-        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,28 +63,14 @@ public class AddEmployeeActivity extends AppCompatActivity {
                     return;
                 }
 
-                Map<String, Object> user = new HashMap<>();
-                user.put("Fullname", getFullName);
-                user.put("Email", getEmail);
-                user.put("Phone number", getPhoneNumber);
-                user.put("Designation", getDepartment);
-                user.put("Basic Pay", getBasicPay);
-                user.put("Status", getEmpStatus);
-
-                db.collection("employee").document(getEmail)
-                        .set(user)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(AddEmployeeActivity.this, "New Employee Added", Toast.LENGTH_SHORT).show();
-                                    Intent gotoAddEmployeePicture = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
-                                    startActivity(gotoAddEmployeePicture);
-                                } else {
-                                    Toast.makeText(AddEmployeeActivity.this, "Adding Employee Failed", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                Intent intent = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
+                intent.putExtra("FullName", getFullName);
+                intent.putExtra("Email", getEmail);
+                intent.putExtra("PhoneNumber", getPhoneNumber);
+                intent.putExtra("Department", getDepartment);
+                intent.putExtra("BasicPay", getBasicPay);
+                intent.putExtra("Status",getEmpStatus);
+                startActivity(intent);
             }
         });
 
@@ -111,7 +85,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
     }
 
     public boolean isValidPhoneNumber(String phoneNumber) {
-
         return phoneNumber.matches("^[0-9()-]+$");
     }
 }
