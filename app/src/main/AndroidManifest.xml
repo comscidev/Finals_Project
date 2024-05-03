@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" >
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -11,10 +11,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MobilePayroll"
-        tools:targetApi="34" >
+        tools:targetApi="34">
         <activity
-            android:name=".EmployeeList" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
+            android:name=".PayrollComputation"
             android:exported="false" />
+        <activity
+            android:name=".EmployeeList"
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar" />
         <activity
             android:name=".Edit_Profilepage"
             android:exported="false" />
@@ -35,7 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".SplashScreenActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

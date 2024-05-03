@@ -10,7 +10,7 @@
     tools:context=".Profilepage_function">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/admin_profpic"
         android:layout_width="100sp"
         android:layout_height="100sp"
         android:src="@drawable/userprofile"
@@ -45,7 +45,7 @@
 
 
     <TextView
-        android:id="@+id/titleName"
+        android:id="@+id/adminName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -53,9 +53,9 @@
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@id/imageView2"
-        app:layout_constraintEnd_toEndOf="@id/imageView2"
-        app:layout_constraintTop_toBottomOf="@id/imageView2"/>
+        app:layout_constraintStart_toStartOf="@id/admin_profpic"
+        app:layout_constraintEnd_toEndOf="@id/admin_profpic"
+        app:layout_constraintTop_toBottomOf="@id/admin_profpic"/>
 
 
     <Button
@@ -71,7 +71,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearlayout"
         app:layout_constraintEnd_toEndOf="@+id/linearlayout"
         app:layout_constraintStart_toStartOf="@id/linearlayout"
-        app:layout_constraintTop_toBottomOf="@id/titleName"
+        app:layout_constraintTop_toBottomOf="@id/adminName"
         app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
@@ -86,7 +86,7 @@
         android:layout_marginTop="70dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleName">
+        app:layout_constraintTop_toBottomOf="@id/adminName">
 
 
         <LinearLayout
@@ -110,10 +110,10 @@
                 android:textColor="@color/gray"/>
 
             <TextView
-                android:id="@+id/profile_Job"
+                android:id="@+id/profile_position"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="name"
+                android:hint="position"
                 android:textColor="@color/black"
                 android:layout_weight="1"
                 android:textAlignment="viewEnd"
