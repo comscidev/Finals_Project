@@ -83,7 +83,7 @@ public class AddEmployeePicture extends AppCompatActivity {
 
     private void uploadImage(String email) {
         if (imageUri != null) {
-            StorageReference ref = storageReference.child("images/" + email + "/" + System.currentTimeMillis() + ".jpg");
+            StorageReference ref = storageReference.child("employees/" + email + "/" + System.currentTimeMillis() + ".jpg");
             ref.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -116,9 +116,11 @@ public class AddEmployeePicture extends AppCompatActivity {
         String phoneNumber = intent.getStringExtra("PhoneNumber");
         String department = intent.getStringExtra("Department");
         String basicPay = intent.getStringExtra("BasicPay");
+        String  status = intent.getStringExtra("Status");
+
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl);
+        Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl,status);
 
         db.collection("employees").document(email)
                 .set(employee)

@@ -7,20 +7,22 @@ public class Employee {
     private String department;
     private String basicPay;
     private String imageUrl;
+    private String status;
 
     public Employee() {
-        // Default constructor required for Firestore
     }
 
-    public Employee(String fullName, String email, String phoneNumber, String department, String basicPay, String imageUrl) {
+    public Employee(String fullName, String email, String phoneNumber, String department, String basicPay, String imageUrl, String status) {
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.department = department;
         this.basicPay = basicPay;
         this.imageUrl = imageUrl;
+        this.status = status; // Initialize status
     }
 
+    // Getters and setters for all fields
     public String getFullName() {
         return fullName;
     }
@@ -67,5 +69,13 @@ public class Employee {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
