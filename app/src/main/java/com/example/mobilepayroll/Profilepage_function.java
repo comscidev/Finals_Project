@@ -1,18 +1,23 @@
 package com.example.mobilepayroll;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -20,59 +25,78 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profilepage_function extends AppCompatActivity {
-    BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseAuth  Auth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_profilepage_function);
-        TextView display_position = findViewById(R.id.profile_position);
-        TextView display_email = findViewById(R.id.profile_Email);
-        Button edit_profile = findViewById(R.id.EditProfile);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        TextView displayName = findViewById(R.id.adminName);
+        TextView displayPosition = findViewById(R.id.profile_position);
+        TextView displayEmail = findViewById(R.id.profile_Email);
+        Button editProfile = findViewById(R.id.EditProfile);
         Button sign_out = findViewById(R.id.logout_btn);
-        String userID = Auth.getCurrentUser().getUid();
+        ImageView adminProfileImage = findViewById(R.id.admin_profpic); // Check this ID
         ImageButton back = findViewById(R.id.backIcon);
 
-
+        String userID = auth.getCurrentUser().getUid();
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
                                 @Nullable FirebaseFirestoreException error) {
-                if (documentSnapshot != null) {
-                    display_position.setText(documentSnapshot.getString("position"));
-                    display_email.setText(documentSnapshot.getString("email"));
+                if (error != null) {
+                    Toast.makeText(Profilepage_function.this, "Firestore Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    displayName.setText(documentSnapshot.getString("fullname"));
+                    displayPosition.setText(documentSnapshot.getString("position"));
+                    displayEmail.setText(documentSnapshot.getString("email"));
+
+                    // Load profile image using Picasso with caching
+                    String imageUrl = documentSnapshot.getString("profileImageUrl");
+                    if (imageUrl != null && !imageUrl.isEmpty()) {
+                        Picasso.get().load(Uri.parse(imageUrl));
+                    } else {
+                        adminProfileImage.setImageResource(R.drawable.default_image);
+                    }
                 }
             }
         });
 
-        edit_profile.setOnClickListener(new View.OnClickListener() {
+        editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GotoEditProfilePage = new Intent(Profilepage_function.this, Edit_Profilepage.class);
-                startActivity(GotoEditProfilePage);
+                Intent gotoEditProfilePage = new Intent(Profilepage_function.this, Edit_Profilepage.class);
+                startActivity(gotoEditProfilePage);
             }
         });
+
         sign_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
-                Intent GotoMainActivity = new Intent(Profilepage_function.this, MainActivity.class);
-                GotoMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(GotoMainActivity);
-                finish();
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    Intent goToMainActivity = new Intent(Profilepage_function.this, MainActivity.class);
+                    goToMainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(goToMainActivity);
+                    finish();
+                } else {
+                    Toast.makeText(Profilepage_function.this, "Logout failed. Please try again.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GotoEmployeeList = new Intent(Profilepage_function.this, EmployeeList.class);
-                startActivity(GotoEmployeeList);
+                Intent gotoEmployeeList = new Intent(Profilepage_function.this, EmployeeList.class);
+                startActivity(gotoEmployeeList);
             }
         });
     }
-
 }

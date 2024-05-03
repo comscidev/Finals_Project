@@ -102,7 +102,7 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/label_UploadImg"
+                android:id="@+id/Upload_emp_pic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -145,7 +145,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/next_btn2"
+        android:id="@+id/ButtonToEmpList"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginTop="5dp"

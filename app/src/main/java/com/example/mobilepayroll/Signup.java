@@ -35,7 +35,7 @@ public class Signup extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         Auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        EditText Fulll_Name = findViewById(R.id.textName);
+        EditText Full_Name = findViewById(R.id.textName);
         EditText Email = findViewById(R.id.textEmail);
         EditText Password = findViewById(R.id.textPassword);
         EditText Confirm_Password = findViewById(R.id.textConfirmPassword);
@@ -96,7 +96,7 @@ public class Signup extends AppCompatActivity {
                                         DocumentReference documentReference = db.collection("users").
                                                 document(userID);
                                         Map<String, Object> userData = new HashMap<>();
-                                        userData.put("fullname", Fulll_Name.getText().toString());
+                                        userData.put("fullname", Full_Name.getText().toString());
                                         userData.put("email", GetEmail);
                                         userData.put("password", GetPassword);
                                         documentReference.set(userData).addOnSuccessListener

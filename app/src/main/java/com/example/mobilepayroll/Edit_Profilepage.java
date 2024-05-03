@@ -1,21 +1,21 @@
 package com.example.mobilepayroll;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,21 +25,24 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 public class Edit_Profilepage extends AppCompatActivity {
     FirebaseAuth Auth;
     FirebaseFirestore db;
 
     String userID;
+    ImageView admin_profile_image;
     DocumentSnapshot documentSnapshot; // Declare documentSnapshot here
+
+    StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_edit_profilepage);
         EditText Profile_Name = findViewById(R.id.edit_profile_Name);
         EditText Change_AdminEmail = findViewById(R.id.edit_profile_Email);
@@ -48,9 +51,19 @@ public class Edit_Profilepage extends AppCompatActivity {
         Auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         userID = Auth.getCurrentUser().getUid();
+        admin_profile_image = findViewById(R.id.profile_image);
+        ImageButton add_profile_image = findViewById(R.id.set_profimage);
         Button SaveEditButton = findViewById(R.id.save_btn);
         ImageButton BackButton = findViewById(R.id.backIcon2);
+        storageReference = FirebaseStorage.getInstance().getReference();
+        StorageReference profileref  = storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
+        profileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
 
+                Picasso.get().load(uri).into(admin_profile_image);
+            }
+        });
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
@@ -67,13 +80,11 @@ public class Edit_Profilepage extends AppCompatActivity {
         SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String GetNewName = Profile_Name.getText().toString();
                 String GetNewEmail =Change_AdminEmail.getText().toString();
                 String GetNewPassword = Change_AdminPassword.getText().toString();
                 String GetNewPosition = Change_ProfilePositon.getText().toString();
 
                 boolean emailChanged = !GetNewEmail.equals(documentSnapshot.getString("email"));
-
                 if (emailChanged) {
                     if (isValidEmail(GetNewEmail
                     )) {
@@ -122,10 +133,8 @@ public class Edit_Profilepage extends AppCompatActivity {
                                 });
                     } else {
                         Change_AdminEmail.setError("Invalid email format.");
-                        return;
                     }
                 }
-
 
                 if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
@@ -190,6 +199,69 @@ public class Edit_Profilepage extends AppCompatActivity {
                 startActivity(BackToProfilePageFunction);
             }
         });
+
+        add_profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent OpenGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(OpenGallery, 1000);
+
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1000){
+            if (resultCode == Activity.RESULT_OK){
+                Uri imageUri = data.getData();
+
+                uploadImageToFirebaseStorage(imageUri);
+            }
+
+        }
+    }
+
+    private void uploadImageToFirebaseStorage(Uri imageUri) {
+        StorageReference fileref =storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
+        fileref.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Picasso.get().load(uri).into(admin_profile_image);
+
+                        saveImageUrlToFirestore(uri.toString());
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Edit_Profilepage.this, "Failed", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void saveImageUrlToFirestore(String imageUrl) {
+        DocumentReference userRef = db.collection("users").document(userID);
+        userRef.update("profileImageUrl", imageUrl)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(Edit_Profilepage.this, "Profile image saved", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(Edit_Profilepage.this, "Failed to save image URL", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private boolean isValidPassword(String password) {
@@ -200,3 +272,5 @@ public class Edit_Profilepage extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
+
+

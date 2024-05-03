@@ -7,7 +7,7 @@
     tools:context=".SplashScreenActivity">
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/admin_profpic"
         android:layout_width="151dp"
         android:layout_height="137dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -155,7 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/transparent"
-                android:hint="phone"
+                android:hint="09xxxxxxxxx "
                 android:inputType="phone"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
