@@ -60,6 +60,26 @@ public class AddEmployeePicture extends AppCompatActivity {
                 startActivity(BackToEmployeeListPage);
             }
         });
+        UploadEmpPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent Opengallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(Opengallery, 1000);
 
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1000){
+            if (resultCode == Activity.RESULT_OK){
+                Uri imageUri = data.getData();
+                EmployeeProfPic.setImageURI(imageUri);
+            }
+        }
     }
 }

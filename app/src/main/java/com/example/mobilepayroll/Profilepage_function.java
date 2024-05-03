@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -46,10 +47,6 @@ public class Profilepage_function extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
                                 @Nullable FirebaseFirestoreException error) {
-                if (error != null) {
-                    Toast.makeText(Profilepage_function.this, "Firestore Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
                     displayName.setText(documentSnapshot.getString("fullname"));
@@ -59,7 +56,22 @@ public class Profilepage_function extends AppCompatActivity {
                     // Load profile image using Picasso with caching
                     String imageUrl = documentSnapshot.getString("profileImageUrl");
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        Picasso.get().load(Uri.parse(imageUrl));
+                        Picasso.get()
+                                .load(Uri.parse(imageUrl))
+                                .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache first
+                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Disable caching
+                                .into(adminProfileImage, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                        // Image loaded successfully
+                                    }
+
+                                    @Override
+                                    public void onError(Exception e) {
+                                        // Try loading from network if caching failed
+                                        Picasso.get().load(Uri.parse(imageUrl)).into(adminProfileImage);
+                                    }
+                                });
                     } else {
                         adminProfileImage.setImageResource(R.drawable.default_image);
                     }
