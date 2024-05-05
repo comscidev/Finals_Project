@@ -75,8 +75,8 @@ public class Signup extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     FirebaseUser firebaseUser = Auth.getCurrentUser();
                                     if (firebaseUser != null) {
-                                        firebaseUser.sendEmailVerification().
-                                                addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        firebaseUser.sendEmailVerification()
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {

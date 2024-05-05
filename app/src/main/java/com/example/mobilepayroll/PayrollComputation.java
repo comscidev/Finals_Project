@@ -98,13 +98,13 @@ public class PayrollComputation extends AppCompatActivity {
         double EmpBasicPay = EmpRate * TotalDaysOfWork;
         double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString());
         double OvertimeRate = (EmpRate / 8 * 1.25);
-        double OvetimePayment = OvertimeRate * TotalOverTimePay;
+        double OvertimePayment = OvertimeRate * TotalOverTimePay;
         double AdditionalPayment = parseDouble(Emp_AdditionalPayment.getText().toString());
         double SpecialAllowance = parseDouble(Emp_SpecialAllowance.getText().toString());
-        double TotalEarnings = EmpBasicPay + OvetimePayment + SpecialAllowance + AdditionalPayment;
+        double TotalEarnings = EmpBasicPay + OvertimePayment + SpecialAllowance + AdditionalPayment;
 
         Emp_OvertimeRate.setText(String.valueOf(OvertimeRate));
-        Emp_OverTimePay.setText(String.valueOf(OvetimePayment));
+        Emp_OverTimePay.setText(String.valueOf(OvertimePayment));
         Emp_BasicPay.setText(String.valueOf(EmpBasicPay));
         DisplayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
 

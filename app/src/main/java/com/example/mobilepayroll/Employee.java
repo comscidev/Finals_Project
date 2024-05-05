@@ -12,7 +12,9 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String fullName, String email, String phoneNumber, String department, String basicPay, String imageUrl, String status) {
+    public Employee(String fullName, String email, String phoneNumber, String department, String basicPay,
+                    String imageUrl, String status) {
+
         this.fullName = fullName;
         this.email = email;
         this.phoneNumber = phoneNumber;

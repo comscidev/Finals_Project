@@ -29,8 +29,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee);
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         EditText empFullName = findViewById(R.id.add_fname);
         EditText empEmail = findViewById(R.id.add_email);
         EditText empPhone = findViewById(R.id.add_phone);
@@ -83,7 +81,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
             }
         });
     }
-
     public boolean isValidPhoneNumber(String phoneNumber) {
         return phoneNumber.matches("^[0-9()-]+$");
     }

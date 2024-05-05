@@ -39,7 +39,7 @@ public class Profilepage_function extends AppCompatActivity {
         Button editProfile = findViewById(R.id.EditProfile);
         Button sign_out = findViewById(R.id.logout_btn);
         ImageView adminProfileImage = findViewById(R.id.admin_profpic); // Check this ID
-        ImageButton back = findViewById(R.id.backIcon);
+        ImageButton BackToEmployeeList = findViewById(R.id.backIcon);
 
         String userID = auth.getCurrentUser().getUid();
         DocumentReference documentReference = db.collection("users").document(userID);
@@ -53,7 +53,6 @@ public class Profilepage_function extends AppCompatActivity {
                     displayPosition.setText(documentSnapshot.getString("position"));
                     displayEmail.setText(documentSnapshot.getString("email"));
 
-                    // Load profile image using Picasso with caching
                     String imageUrl = documentSnapshot.getString("profileImageUrl");
                     if (imageUrl != null && !imageUrl.isEmpty()) {
                         Picasso.get()
@@ -63,12 +62,10 @@ public class Profilepage_function extends AppCompatActivity {
                                 .into(adminProfileImage, new Callback() {
                                     @Override
                                     public void onSuccess() {
-                                        // Image loaded successfully
                                     }
 
                                     @Override
                                     public void onError(Exception e) {
-                                        // Try loading from network if caching failed
                                         Picasso.get().load(Uri.parse(imageUrl)).into(adminProfileImage);
                                     }
                                 });
@@ -103,7 +100,7 @@ public class Profilepage_function extends AppCompatActivity {
             }
         });
 
-        back.setOnClickListener(new View.OnClickListener() {
+        BackToEmployeeList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent gotoEmployeeList = new Intent(Profilepage_function.this, EmployeeList.class);
