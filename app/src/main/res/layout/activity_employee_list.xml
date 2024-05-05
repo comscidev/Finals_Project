@@ -17,7 +17,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="150dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="20dp">
@@ -72,25 +72,21 @@
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/titleEmployeeList"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.488" />
+                app:layout_constraintVertical_bias="0.420"/>
 
-            <EditText
+            <SearchView
                 android:id="@+id/searchbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:iconifiedByDefault="false"
+                android:searchHintIcon="@null"
+                android:queryHint="Search..."
+                android:focusable="false"
+                android:searchIcon="@drawable/baseline_search_24"
+                android:closeIcon="@drawable/baseline_clear_24"
                 android:background="@drawable/custom_outline"
-                android:drawableStart="@drawable/search_icon"
-                android:drawablePadding="8dp"
-                android:ems="10"
-                android:hint="Search"
-                android:inputType="text"
-                android:padding="8dp"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
-                tools:layout_editor_absoluteX="0dp" />
+                app:layout_constraintTop_toBottomOf="@id/titleEmployeeList"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

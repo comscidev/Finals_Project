@@ -19,39 +19,48 @@ public class Employee {
         this.department = department;
         this.basicPay = basicPay;
         this.imageUrl = imageUrl;
-        this.status = status; // Initialize status
+        this.status = status;
     }
 
-    // Getters and setters for all fields
+
     public String getFullName() {
+
         return fullName;
     }
 
     public void setFullName(String fullName) {
+
         this.fullName = fullName;
     }
 
     public String getEmail() {
+
         return email;
     }
 
     public void setEmail(String email) {
+
+
         this.email = email;
     }
 
     public String getPhoneNumber() {
+
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
+
         this.phoneNumber = phoneNumber;
     }
 
     public String getDepartment() {
+
         return department;
     }
 
     public void setDepartment(String department) {
+
         this.department = department;
     }
 
@@ -60,14 +69,17 @@ public class Employee {
     }
 
     public void setBasicPay(String basicPay) {
+
         this.basicPay = basicPay;
     }
 
     public String getImageUrl() {
+
         return imageUrl;
     }
 
     public void setImageUrl(String imageUrl) {
+
         this.imageUrl = imageUrl;
     }
 

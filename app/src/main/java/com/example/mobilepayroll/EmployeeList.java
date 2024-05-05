@@ -60,6 +60,10 @@ public class EmployeeList extends AppCompatActivity {
                                     return true;
                                 case R.id.bottom_employees:
                                     return true;
+                                case R.id.bottom_payroll:
+                                    startActivity(new Intent(getApplicationContext(), PayrollComputation.class));
+                                    overridePendingTransition(0,0);
+                                    return true;
                             }
                             return false;
                         }
