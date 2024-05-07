@@ -105,7 +105,7 @@ public class AddEmployeePicture extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl,status);
 
-        db.collection("employees").document(email)
+        db.collection("employees").document(fullName)
                 .set(employee).addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         Toast.makeText(AddEmployeePicture.this, "Employee Added Successfully", Toast.LENGTH_SHORT).show();
