@@ -3,10 +3,17 @@ package com.example.mobilepayroll;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
 import java.util.Locale;
 
 public class PayrollComputation extends AppCompatActivity {
@@ -17,6 +24,8 @@ public class PayrollComputation extends AppCompatActivity {
     EditText Emp_Rate, Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
             Payroll_Tittle, Emp_OvertimeRate, Emp_BasicPay, Emp_OverTimePay,
             Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
+
+        FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +71,48 @@ public class PayrollComputation extends AppCompatActivity {
         Emp_CashAdvance.addTextChangedListener(deductionWatcher);
         Emp_MealAllowance.addTextChangedListener(deductionWatcher);
         Emp_Shop.addTextChangedListener(deductionWatcher);
-    }
 
+        db = FirebaseFirestore.getInstance();
+
+        Emp_Name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String fullName = s.toString().trim();
+                loadUserData(fullName);
+            }
+        });
+
+
+    }
+    private void loadUserData(String fullName) {
+        CollectionReference employeesRef = db.collection("employees");
+        Query query = employeesRef.whereEqualTo("fullName", fullName).limit(1);
+
+        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (!queryDocumentSnapshots.isEmpty()) {
+                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
+                String basicPay = documentSnapshot.getString("basicPay");
+                Emp_Rate.setText(basicPay);
+                String designation = documentSnapshot.getString("department");
+                Emp_Designation.setText(designation);
+            } else {
+                Emp_Rate.setText("");
+                Emp_Designation.setText("");
+            }
+        }).addOnFailureListener(e -> {
+            Emp_Rate.setText("");
+            Emp_Designation.setText("");
+            Log.e("Firestore", "Error retrieving user data", e);
+        });
+    }
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
