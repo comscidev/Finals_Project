@@ -16,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,9 +27,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+
+import javax.xml.namespace.QName;
 
 public class EmployeeList extends AppCompatActivity {
 
+    RecyclerView recyclerView;
+
+    UserAdapter userAdapter ;
     BottomNavigationView bottomNavigationView;
 
     @Override
@@ -60,6 +69,10 @@ public class EmployeeList extends AppCompatActivity {
                                     return true;
                                 case R.id.bottom_employees:
                                     return true;
+                                case R.id.bottom_payroll:
+                                    startActivity(new Intent(getApplicationContext(), PayrollComputation.class));
+                                    overridePendingTransition(0,0);
+                                    return true;
                             }
                             return false;
                         }
@@ -75,5 +88,19 @@ public class EmployeeList extends AppCompatActivity {
         }
     });
 
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewId);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Query query = db.collection("employees");
+
+        FirestoreRecyclerOptions<UserModel> options =
+                new FirestoreRecyclerOptions.Builder<UserModel>()
+                        .setQuery(query, UserModel.class)
+                        .build();
+        userAdapter = new UserAdapter(options);
+        recyclerView.setAdapter(userAdapter);
+
+        userAdapter.startListening();
     }
 }

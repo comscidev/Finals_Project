@@ -85,7 +85,7 @@
                 android:src="@drawable/default_image"
                 android:layout_marginStart="65dp"
                 android:scaleType="centerCrop"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 app:shapeAppearanceOverlay="@style/roundImageView">
 
             </com.google.android.material.imageview.ShapeableImageView>
@@ -97,7 +97,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="12dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             android:padding="8dp">
 
@@ -107,35 +107,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Upload a Photo"
-                android:textAlignment="center"
-                android:textColor="@color/gray"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="10dp"
-            android:alpha="0.5"
-            android:background="@color/gray" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginBottom="5dp"
-            android:orientation="horizontal"
-            android:padding="8dp">
-
-            <TextView
-                android:id="@+id/label_TakeImg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Take a Photo"
                 android:textAlignment="center"
                 android:textColor="@color/gray"
                 android:textSize="18sp"

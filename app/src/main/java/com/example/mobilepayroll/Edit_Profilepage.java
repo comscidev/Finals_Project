@@ -1,12 +1,14 @@
 package com.example.mobilepayroll;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,8 +18,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -40,6 +45,9 @@ public class Edit_Profilepage extends AppCompatActivity {
 
     StorageReference storageReference;
 
+    Dialog dialog;
+    Button btnDialogNo, btnDialogYes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +63,13 @@ public class Edit_Profilepage extends AppCompatActivity {
         ImageButton add_profile_image = findViewById(R.id.set_profimage);
         Button SaveEditButton = findViewById(R.id.save_btn);
         ImageButton BackButton = findViewById(R.id.backIcon2);
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
         storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference profileref  = storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
         profileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -77,6 +92,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                 }
             }
         });
+
         SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,113 +106,103 @@ public class Edit_Profilepage extends AppCompatActivity {
                     )) {
                         FirebaseUser user = Auth.getCurrentUser();
                         if (user != null) {
-                            user.verifyBeforeUpdateEmail(GetNewEmail)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            user.sendEmailVerification()
-                                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void aVoid) {
-                                                            Toast.makeText(Edit_Profilepage.this,
-                                                                    "A verification email has been sent to your new email address.",
-                                                                    Toast.LENGTH_LONG).show();
-                                                        }
-                                                    });
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(Edit_Profilepage.this,
-                                                    "Failed to update email: " + e.getMessage(),
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                            user.verifyBeforeUpdateEmail(GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        Toast.makeText(Edit_Profilepage.this, "Email sent for verification", Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        Toast.makeText(Edit_Profilepage.this, "Failed to send email verification", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         }
-                        documentReference.update("email", GetNewEmail)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Email updated successfully!",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Failed to update email: " + e.getMessage(),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                        documentReference.update("email", GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()){
+                                    Toast.makeText(Edit_Profilepage.this, "Email Updated Successfully", Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Toast.makeText(Edit_Profilepage.this, "Failed to Update", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        });
                     } else {
                         Change_AdminEmail.setError("Invalid email format.");
                     }
                 }
-
                 if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
                     if (user != null) {
                         user.updatePassword(GetNewPassword)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Password changed successfully!",
-                                                Toast.LENGTH_SHORT).show();
-                                        documentReference.update("password", GetNewPassword)
-                                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        // Password updated in Firestore
-                                                    }
-                                                });
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Edit_Profilepage.this,
-                                                "Failed to change password: " + e.getMessage(),
-                                                Toast.LENGTH_SHORT).show();
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(Edit_Profilepage.this,
+                                                    "Password changed successfully!",
+                                                    Toast.LENGTH_SHORT).show();
+                                            documentReference.update("password", GetNewPassword)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> Task) {
+                                                            if (Task.isSuccessful()) {
+                                                            } else {
+                                                                Toast.makeText(Edit_Profilepage.this,
+                                                                        "Failed to update password in Firestore",
+                                                                        Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
+                                        } else {
+                                            Toast.makeText(Edit_Profilepage.this,
+                                                    "Failed to change password: " + task.getException().getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 });
                     }
                 }
 
                 if (!GetNewPosition.equals(documentSnapshot.getString("position"))) {
-                    documentReference.update("position", GetNewPosition)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(Edit_Profilepage.this,
-                                            "Position updated successfully!",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(Edit_Profilepage.this,
-                                            "Failed to update : " + e.getMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                    documentReference.update("position", GetNewPosition).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(Edit_Profilepage.this, "Position Updated", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Edit_Profilepage.this, "Position Failed to Update", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
                 }
-
-
                 Intent GotoProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
                 startActivity(GotoProfilePageFunction);
+            }
+        });
+
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(BackToProfilePageFunction);
+                dialog.dismiss();
             }
         });
 
         BackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-                startActivity(BackToProfilePageFunction);
+                dialog.show();
             }
         });
 
@@ -206,64 +212,59 @@ public class Edit_Profilepage extends AppCompatActivity {
                 Intent OpenGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(OpenGallery, 1000);
 
-
             }
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1000){
             if (resultCode == Activity.RESULT_OK){
                 Uri imageUri = data.getData();
-
                 uploadImageToFirebaseStorage(imageUri);
             }
 
         }
     }
-
     private void uploadImageToFirebaseStorage(Uri imageUri) {
-        StorageReference fileref =storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
-        fileref.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                fileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        StorageReference fileref = storageReference.child("users/" + Auth.getCurrentUser().getUid() + "/profile.jpg");
+        fileref.putFile(imageUri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onSuccess(Uri uri) {
-                        Picasso.get().load(uri).into(admin_profile_image);
-
-                        saveImageUrlToFirestore(uri.toString());
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            fileref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> uriTask) {
+                                    if (uriTask.isSuccessful()) {
+                                        Uri uri = uriTask.getResult();
+                                        Picasso.get().load(uri).into(admin_profile_image);
+                                        saveImageUrlToFirestore(uri.toString());
+                                    } else {
+                                        Toast.makeText(Edit_Profilepage.this, "Failed to get download URL", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(Edit_Profilepage.this, "Upload Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+    }
+    private void saveImageUrlToFirestore(String imageUrl) {
+        DocumentReference userRef = db.collection("users").document(userID);
+        userRef.update("profileImageUrl", imageUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Edit_Profilepage.this, "Failed", Toast.LENGTH_SHORT).show();
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(Edit_Profilepage.this, "Image URL saved", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(Edit_Profilepage.this, "Failed to save Image URL", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
     }
-
-    private void saveImageUrlToFirestore(String imageUrl) {
-        DocumentReference userRef = db.collection("users").document(userID);
-        userRef.update("profileImageUrl", imageUrl)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(Edit_Profilepage.this, "Profile image saved", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Edit_Profilepage.this, "Failed to save image URL", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
     private boolean isValidPassword(String password) {
         return password.length() >= 6 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
     }

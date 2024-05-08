@@ -13,6 +13,9 @@
         android:theme="@style/Theme.MobilePayroll"
         tools:targetApi="34">
         <activity
+            android:name=".EmployeeDisplay"
+            android:exported="false" />
+        <activity
             android:name=".PayrollComputation"
             android:exported="false" />
         <activity
