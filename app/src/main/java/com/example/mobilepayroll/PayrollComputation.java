@@ -70,8 +70,9 @@ public class PayrollComputation extends AppCompatActivity {
         Emp_Shop = findViewById(R.id.EmployeeShop);
         DisplayNetPay = findViewById(R.id.DisplayNetPay);
         CancelPayroll = findViewById(R.id.cancel_btn);
-
         Savebtn = findViewById(R.id.saveComputationBtn);
+
+        // Initialize dialog and other components here...
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.cancel_dialog);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -80,6 +81,17 @@ public class PayrollComputation extends AppCompatActivity {
 
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+        // Automatically set employee's name and department from intent
+        Intent intent = getIntent();
+        if (intent != null) {
+            String fullName = intent.getStringExtra("fullName");
+            String department = intent.getStringExtra("department");
+            String basicPay = intent.getStringExtra("basicPay");
+            Emp_Name.setText(fullName);
+            Emp_Designation.setText(department);
+            Emp_Rate.setText(basicPay);
+        }
 
         Savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +158,7 @@ public class PayrollComputation extends AppCompatActivity {
 
     private void loadUserData(String fullName) {
         CollectionReference employeesRef = db.collection("employees");
-        Query query = employeesRef.whereEqualTo("fullName", fullName).limit(1);
+        Query query = employeesRef.whereEqualTo("fullName", fullName);
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
@@ -155,6 +167,7 @@ public class PayrollComputation extends AppCompatActivity {
                 Emp_Rate.setText(basicPay);
                 String designation = documentSnapshot.getString("department");
                 Emp_Designation.setText(designation);
+                Emp_Name.setText(fullName);
             } else {
                 Emp_Rate.setText("");
                 Emp_Designation.setText("");
@@ -162,6 +175,7 @@ public class PayrollComputation extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             Emp_Rate.setText("");
             Emp_Designation.setText("");
+            Emp_Name.setText(""); // Clear the name field if data retrieval fails
             Log.e("Firestore", "Error retrieving user data", e);
         });
     }
@@ -196,20 +210,18 @@ public class PayrollComputation extends AppCompatActivity {
         double EmpRate = parseDouble(Emp_Rate.getText().toString());
         double TotalDaysOfWork = parseDouble(Emp_Total_Days.getText().toString());
         double EmpBasicPay = EmpRate * TotalDaysOfWork;
-        double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString());
-        double OvertimeRate = (EmpRate / 8 * 1.25);
-        double OvertimePayment = OvertimeRate * TotalOverTimePay;
+        double OvertimeRate = EmpRate / 8 * 1.25;
+        double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString()) * OvertimeRate;
         double AdditionalPayment = parseDouble(Emp_AdditionalPayment.getText().toString());
         double SpecialAllowance = parseDouble(Emp_SpecialAllowance.getText().toString());
-        double TotalEarnings = EmpBasicPay + OvertimePayment + SpecialAllowance + AdditionalPayment;
+        double TotalEarnings = EmpBasicPay + TotalOverTimePay + SpecialAllowance + AdditionalPayment;
 
         Emp_OvertimeRate.setText(String.valueOf(OvertimeRate));
-        Emp_OverTimePay.setText(String.valueOf(OvertimePayment));
+        Emp_OverTimePay.setText(String.valueOf(TotalOverTimePay));
         Emp_BasicPay.setText(String.valueOf(EmpBasicPay));
         DisplayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
-
-        calculateTotalNetPay();
     }
+
 
     private void calculateTotalDeduction() {
         double Emptax = parseDouble(Emp_Tax.getText().toString());
@@ -224,6 +236,7 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayTotalDeduction.setText(String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
         calculateTotalNetPay();
     }
+
     private void calculateTotalNetPay() {
         double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
         double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
@@ -231,6 +244,7 @@ public class PayrollComputation extends AppCompatActivity {
 
         DisplayNetPay.setText(String.format(Locale.getDefault(), "₱%.2f", NetPay));
     }
+
     private void savePayrollData() {
         String FullName = Emp_Name.getText().toString().trim();
         String Designation = Emp_Designation.getText().toString();
@@ -258,7 +272,6 @@ public class PayrollComputation extends AppCompatActivity {
             }
         });
     }
-
     private double parseDouble(String value) {
         try {
             return Double.parseDouble(value);

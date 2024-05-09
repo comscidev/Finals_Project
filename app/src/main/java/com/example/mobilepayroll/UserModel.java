@@ -5,15 +5,24 @@ public class UserModel {
     public UserModel() {
     }
 
-    String fullName, department, imageUrl, email, phoneNumber, status;
+    String fullName, department, imageUrl, email, phoneNumber, status, basicPay;
 
-    public UserModel(String fullName, String department, String imageUrl, String email, String phoneNumber, String status) {
+    public String getBasicPay() {
+        return basicPay;
+    }
+
+    public void setBasicPay(String basicPay) {
+        this.basicPay = basicPay;
+    }
+
+    public UserModel(String fullName, String department, String imageUrl, String email, String phoneNumber, String status, String basicPay) {
         this.fullName = fullName;
         this.department = department;
         this.imageUrl = imageUrl;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.status = status;
+        this.basicPay = basicPay;
     }
 
     public String getFullName() {

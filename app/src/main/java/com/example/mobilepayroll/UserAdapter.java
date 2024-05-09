@@ -24,13 +24,14 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
 
     @Override
     protected void onBindViewHolder(@NonNull UserAdapter.holder holder, int i, @NonNull UserModel userModel) {
-        holder.fullName.setText("Name:" +userModel.fullName);
-        holder.deparment.setText("DepartmenT: " +userModel.department);
+        holder.fullName.setText("Name: " +userModel.fullName);
+        holder.deparment.setText("Department: " +userModel.department);
         Picasso.get().load(userModel.imageUrl).into(holder.employee_pic);
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Intent intent = new Intent(v.getContext(), EmployeeDisplay.class);
                 intent.putExtra("fullName",userModel.fullName);
                 intent.putExtra("department", userModel.department);
@@ -38,7 +39,9 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
                 intent.putExtra("email", userModel.email);
                 intent.putExtra("status", userModel.status);
                 intent.putExtra("phoneNumber", userModel.phoneNumber);
+                intent.putExtra("basicPay", userModel.basicPay);
                 v.getContext().startActivity(intent);
+                Toast.makeText(v.getContext(), "You are viewing "+ userModel.fullName + "'s profile", Toast.LENGTH_SHORT).show();
             }
         });
     }
