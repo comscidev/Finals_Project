@@ -1,9 +1,11 @@
 package com.example.mobilepayroll;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +29,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profilepage_function extends AppCompatActivity {
 
+    Dialog dialog;
+    Button btnDialogCancel, btnDialogLogout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,10 +39,19 @@ public class Profilepage_function extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         TextView displayName = findViewById(R.id.adminName);
-        TextView displayPosition = findViewById(R.id.profile_position);
-        TextView displayEmail = findViewById(R.id.profile_Email);
+        TextView displayPosition = findViewById(R.id.profileDepartment);
+        TextView displayEmail = findViewById(R.id.profileEmail);
         Button editProfile = findViewById(R.id.EditProfile);
-        Button sign_out = findViewById(R.id.logout_btn);
+        Button logout = findViewById(R.id.logout_btn);
+        dialog = new Dialog(Profilepage_function.this);
+        dialog.setContentView(R.layout.logout_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+
+        btnDialogCancel = dialog.findViewById(R.id.btnDialogCancel);
+        btnDialogLogout = dialog.findViewById(R.id.btnDialogLogout);
+
         ImageView adminProfileImage = findViewById(R.id.admin_profpic); // Check this ID
         ImageButton BackToEmployeeList = findViewById(R.id.backIcon);
 
@@ -84,7 +98,14 @@ public class Profilepage_function extends AppCompatActivity {
             }
         });
 
-        sign_out.setOnClickListener(new View.OnClickListener() {
+        btnDialogCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnDialogLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth.getInstance().signOut();
@@ -97,9 +118,16 @@ public class Profilepage_function extends AppCompatActivity {
                 } else {
                     Toast.makeText(Profilepage_function.this, "Logout failed. Please try again.", Toast.LENGTH_SHORT).show();
                 }
+                dialog.dismiss();
             }
         });
-
+        
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+                public void onClick(View v) {
+                    dialog.show();
+            }
+        });
         BackToEmployeeList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

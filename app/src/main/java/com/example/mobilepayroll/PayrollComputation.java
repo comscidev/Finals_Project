@@ -1,11 +1,13 @@
 package com.example.mobilepayroll;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -26,6 +28,9 @@ import java.util.Locale;
 import java.util.Map;
 
 public class PayrollComputation extends AppCompatActivity {
+
+    Dialog dialog;
+    Button btnDialogNo, btnDialogYes;
 
     TextView Emp_Name, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
             DisplayNetPay, CancelPayroll;
@@ -67,6 +72,14 @@ public class PayrollComputation extends AppCompatActivity {
         CancelPayroll = findViewById(R.id.cancel_btn);
 
         Savebtn = findViewById(R.id.saveComputationBtn);
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
 
         Savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,11 +90,26 @@ public class PayrollComputation extends AppCompatActivity {
             }
         });
 
-        CancelPayroll.setOnClickListener(new View.OnClickListener() {
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent CancelPayroll = new Intent(PayrollComputation.this, EmployeeList.class);
                 startActivity(CancelPayroll);
+                dialog.dismiss();
+            }
+        });
+
+        CancelPayroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
             }
         });
 

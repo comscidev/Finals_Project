@@ -105,21 +105,21 @@
             android:padding="8dp">
 
             <TextView
-                android:id="@+id/Name"
+                android:id="@+id/Email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.50"
-                android:text="Job Description"
+                android:layout_weight="1"
+                android:text="Email"
                 android:textColor="@color/gray"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/edit_profile_Job"
+                android:id="@+id/edit_profile_Email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="position"
+                android:hint="email@gmail.com"
                 android:inputType="text"
                 android:backgroundTint="@android:color/transparent"
                 android:textAlignment="viewEnd"
@@ -143,21 +143,21 @@
 
 
             <TextView
-                android:id="@+id/Email"
+                android:id="@+id/Department"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Email"
+                android:text="Department"
                 android:textColor="@color/gray"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/edit_profile_Email"
+                android:id="@+id/edit_profile_Job"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="email"
+                android:hint="department"
                 android:inputType="textEmailAddress"
                 android:backgroundTint="@android:color/transparent"
                 android:textAlignment="viewEnd"

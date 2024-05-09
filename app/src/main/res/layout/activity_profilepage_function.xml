@@ -100,20 +100,20 @@
             android:layout_marginBottom="5dp">
 
             <TextView
-                android:id="@+id/labelJob"
+                android:id="@+id/labelEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.50"
-                android:text="Job Position"
+                android:text="Email"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"/>
 
             <TextView
-                android:id="@+id/profile_position"
+                android:id="@+id/profileEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="position"
+                android:hint="email@gmail.com"
                 android:textColor="@color/black"
                 android:layout_weight="1"
                 android:textAlignment="viewEnd"
@@ -136,21 +136,21 @@
 
 
             <TextView
-                android:id="@+id/labelEmail"
+                android:id="@+id/labelJob"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Email"
+                android:text="Department"
                 android:textColor="@color/gray"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/profile_Email"
+                android:id="@+id/profileDepartment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="email"
+                android:hint="department"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
                 android:textSize="18sp" />

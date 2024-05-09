@@ -218,5 +218,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/linearlayout1.1"
-        android:layout_above="@id/bottomNavigationView" />
+        android:layout_above="@id/bottomNavigationView"/>
 </RelativeLayout>

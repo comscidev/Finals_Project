@@ -1,3 +1,4 @@
+
 package com.example.mobilepayroll;
 
 import android.annotation.SuppressLint;
@@ -80,27 +81,26 @@ public class EmployeeList extends AppCompatActivity {
                 }
             }
         });
-    add_employee.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent GoToAddEmployeeList = new Intent(EmployeeList.this, AddEmployeeActivity.class);
-            startActivity(GoToAddEmployeeList);
-        }
-    });
+            add_employee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent GoToAddEmployeeList = new Intent(EmployeeList.this,
+                            AddEmployeeActivity.class);
+                    startActivity(GoToAddEmployeeList);
+            }
+        });
+            RecyclerView recyclerView = findViewById(R.id.recyclerViewId);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerViewId);
+            Query query = db.collection("employees");
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            FirestoreRecyclerOptions<UserModel> options =
+                    new FirestoreRecyclerOptions.Builder<UserModel>()
+                            .setQuery(query, UserModel.class)
+                            .build();
+            userAdapter = new UserAdapter(options);
+            recyclerView.setAdapter(userAdapter);
+            userAdapter.startListening();
 
-        Query query = db.collection("employees");
-
-        FirestoreRecyclerOptions<UserModel> options =
-                new FirestoreRecyclerOptions.Builder<UserModel>()
-                        .setQuery(query, UserModel.class)
-                        .build();
-        userAdapter = new UserAdapter(options);
-        recyclerView.setAdapter(userAdapter);
-
-        userAdapter.startListening();
     }
 }

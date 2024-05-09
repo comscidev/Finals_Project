@@ -1,12 +1,14 @@
 package com.example.mobilepayroll;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,6 +45,9 @@ public class Edit_Profilepage extends AppCompatActivity {
 
     StorageReference storageReference;
 
+    Dialog dialog;
+    Button btnDialogNo, btnDialogYes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +63,13 @@ public class Edit_Profilepage extends AppCompatActivity {
         ImageButton add_profile_image = findViewById(R.id.set_profimage);
         Button SaveEditButton = findViewById(R.id.save_btn);
         ImageButton BackButton = findViewById(R.id.backIcon2);
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
         storageReference = FirebaseStorage.getInstance().getReference();
         StorageReference profileref  = storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
         profileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -171,11 +183,26 @@ public class Edit_Profilepage extends AppCompatActivity {
             }
         });
 
-        BackButton.setOnClickListener(new View.OnClickListener() {
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
                 startActivity(BackToProfilePageFunction);
+                dialog.dismiss();
+            }
+        });
+
+        BackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.show();
             }
         });
 
