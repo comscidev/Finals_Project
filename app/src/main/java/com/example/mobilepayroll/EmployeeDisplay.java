@@ -120,8 +120,6 @@ public class EmployeeDisplay extends AppCompatActivity {
         }
     }
 
-
-
 }
 
 

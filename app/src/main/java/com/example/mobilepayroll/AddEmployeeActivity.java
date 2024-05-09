@@ -71,7 +71,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         autoCompleteTxt = findViewById(R.id.auto_complete_txt);
         adapterItems = new ArrayAdapter<>(this, R.layout.list_status, items);
         autoCompleteTxt.setAdapter(adapterItems);

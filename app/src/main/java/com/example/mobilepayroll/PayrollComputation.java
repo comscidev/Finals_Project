@@ -32,11 +32,11 @@ public class PayrollComputation extends AppCompatActivity {
     Dialog dialog;
     Button btnDialogNo, btnDialogYes;
 
-    TextView Emp_Name, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
-            DisplayNetPay, CancelPayroll;
+    TextView Emp_Rate, Emp_Name, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
+            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay;
 
-    EditText Emp_Rate, Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
-            Payroll_Tittle, Emp_OvertimeRate, Emp_BasicPay, Emp_OverTimePay,
+    EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
+            Payroll_Tittle,
             Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
 
     Button Savebtn;
@@ -96,11 +96,12 @@ public class PayrollComputation extends AppCompatActivity {
         Savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                savePayrollData();
-                Intent GotoPayrollAgain = new Intent(PayrollComputation.this, PayrollComputation.class);
-                startActivity(GotoPayrollAgain);
+                    savePayrollData();
+                    Intent GotoPayrollAgain = new Intent(PayrollComputation.this, PayrollComputation.class);
+                    startActivity(GotoPayrollAgain);
             }
         });
+
 
         btnDialogNo.setOnClickListener(new View.OnClickListener() {
             @Override
