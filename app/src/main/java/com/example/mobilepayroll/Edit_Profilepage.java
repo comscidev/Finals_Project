@@ -5,8 +5,10 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.DefaultLifecycleObserver;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,12 +44,13 @@ public class Edit_Profilepage extends AppCompatActivity {
 
     String userID;
     ImageView admin_profile_image;
-    DocumentSnapshot documentSnapshot; // Declare documentSnapshot here
+    DocumentSnapshot documentSnapshot;
 
     StorageReference storageReference;
 
     Dialog dialog;
     Button btnDialogNo, btnDialogYes;
+    Button deleteUserButton; // Add reference to delete button
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +67,13 @@ public class Edit_Profilepage extends AppCompatActivity {
         ImageButton add_profile_image = findViewById(R.id.set_profimage);
         Button SaveEditButton = findViewById(R.id.save_btn);
         ImageButton BackButton = findViewById(R.id.backIcon2);
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.cancel_dialog);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
-        dialog.setCancelable(false);
-        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
-        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+        deleteUserButton = findViewById(R.id.delete_btn);
         storageReference = FirebaseStorage.getInstance().getReference();
-        StorageReference profileref  = storageReference.child("users/"+ Auth.getCurrentUser().getUid()+ "/profile.jpg");
+        StorageReference profileref = storageReference.child("users/" + Auth.getCurrentUser().getUid() + "/profile.jpg");
         profileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-
                 Picasso.get().load(uri).into(admin_profile_image);
             }
         });
@@ -96,42 +94,32 @@ public class Edit_Profilepage extends AppCompatActivity {
         SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String GetNewEmail =Change_AdminEmail.getText().toString();
+                String GetNewEmail = Change_AdminEmail.getText().toString();
                 String GetNewPassword = Change_AdminPassword.getText().toString();
                 String GetNewPosition = Change_ProfilePositon.getText().toString();
 
                 boolean emailChanged = !GetNewEmail.equals(documentSnapshot.getString("email"));
                 if (emailChanged) {
-                    if (isValidEmail(GetNewEmail
-                    )) {
+                    if (isValidEmail(GetNewEmail)) {
                         FirebaseUser user = Auth.getCurrentUser();
                         if (user != null) {
-                            user.verifyBeforeUpdateEmail(GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            user.updateEmail(GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        Toast.makeText(Edit_Profilepage.this, "Email sent for verification", Toast.LENGTH_SHORT).show();
-                                    }else {
-                                        Toast.makeText(Edit_Profilepage.this, "Failed to send email verification", Toast.LENGTH_SHORT).show();
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(Edit_Profilepage.this, "Email Updated Successfully", Toast.LENGTH_SHORT).show();
+                                        documentReference.update("email", GetNewEmail);
+                                    } else {
+                                        Toast.makeText(Edit_Profilepage.this, "Failed to Update Email", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                         }
-                        documentReference.update("email", GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(Edit_Profilepage.this, "Email Updated Successfully", Toast.LENGTH_SHORT).show();
-                                }else {
-                                    Toast.makeText(Edit_Profilepage.this, "Failed to Update", Toast.LENGTH_SHORT).show();
-                                }
-
-                            }
-                        });
                     } else {
                         Change_AdminEmail.setError("Invalid email format.");
                     }
                 }
+
                 if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
                     if (user != null) {
@@ -143,18 +131,6 @@ public class Edit_Profilepage extends AppCompatActivity {
                                             Toast.makeText(Edit_Profilepage.this,
                                                     "Password changed successfully!",
                                                     Toast.LENGTH_SHORT).show();
-                                            documentReference.update("password", GetNewPassword)
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> Task) {
-                                                            if (Task.isSuccessful()) {
-                                                            } else {
-                                                                Toast.makeText(Edit_Profilepage.this,
-                                                                        "Failed to update password in Firestore",
-                                                                        Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    });
                                         } else {
                                             Toast.makeText(Edit_Profilepage.this,
                                                     "Failed to change password: " + task.getException().getMessage(),
@@ -183,26 +159,19 @@ public class Edit_Profilepage extends AppCompatActivity {
             }
         });
 
-        btnDialogNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        btnDialogYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-                startActivity(BackToProfilePageFunction);
-                dialog.dismiss();
-            }
-        });
-
         BackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
+                ShowDialog();
+            }
+        });
+
+
+        deleteUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDeleteDialog();
+
             }
         });
 
@@ -214,7 +183,86 @@ public class Edit_Profilepage extends AppCompatActivity {
 
             }
         });
+
     }
+
+    private void ShowDeleteDialog() {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.delete_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteUser();
+                dialog.dismiss();
+            }
+        });
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    private void DeleteUser() {
+        FirebaseUser user = Auth.getCurrentUser();
+        if (user != null) {
+            user.delete();
+            DocumentReference documentReference = db.collection("users").document(userID);
+            documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+                        Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
+                        startActivity(GoToLoginPage);
+                        Toast.makeText(Edit_Profilepage.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toast.makeText(Edit_Profilepage.this, "Failed to Delete", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
+    }
+
+    private void ShowDialog() {
+
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(BackToProfilePageFunction);
+                dialog.dismiss();
+            }
+        });
+
+
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -226,6 +274,7 @@ public class Edit_Profilepage extends AppCompatActivity {
 
         }
     }
+
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         StorageReference fileref = storageReference.child("users/" + Auth.getCurrentUser().getUid() + "/profile.jpg");
         fileref.putFile(imageUri)
@@ -251,6 +300,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                     }
                 });
     }
+
     private void saveImageUrlToFirestore(String imageUrl) {
         DocumentReference userRef = db.collection("users").document(userID);
         userRef.update("profileImageUrl", imageUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -265,6 +315,7 @@ public class Edit_Profilepage extends AppCompatActivity {
             }
         });
     }
+
     private boolean isValidPassword(String password) {
         return password.length() >= 6 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
     }
@@ -272,6 +323,6 @@ public class Edit_Profilepage extends AppCompatActivity {
     private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
-}
 
+}
 

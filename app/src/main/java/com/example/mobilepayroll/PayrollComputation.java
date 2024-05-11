@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -71,8 +72,9 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayNetPay = findViewById(R.id.DisplayNetPay);
         CancelPayroll = findViewById(R.id.cancel_btn);
         Savebtn = findViewById(R.id.saveComputationBtn);
+        Payroll_Tittle = findViewById(R.id.Payslip_Title);
 
-        // Initialize dialog and other components here...
+
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.cancel_dialog);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -82,7 +84,6 @@ public class PayrollComputation extends AppCompatActivity {
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
 
-        // Automatically set employee's name and department from intent
         Intent intent = getIntent();
         if (intent != null) {
             String fullName = intent.getStringExtra("fullName");
@@ -109,7 +110,6 @@ public class PayrollComputation extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
         btnDialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,32 +247,35 @@ public class PayrollComputation extends AppCompatActivity {
     }
 
     private void savePayrollData() {
-        String FullName = Emp_Name.getText().toString().trim();
-        String Designation = Emp_Designation.getText().toString();
-        double Rate = parseDouble(Emp_Rate.getText().toString());
-        double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
-        double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
-        double NetPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
+        String fullName = Emp_Name.getText().toString().trim();
+        String designation = Emp_Designation.getText().toString();
+        String payrollTitle = Payroll_Tittle.getText().toString();
+        double rate = parseDouble(Emp_Rate.getText().toString());
+        double totalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
+        double totalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
+        double netPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
 
         Map<String, Object> payrollData = new HashMap<>();
-        payrollData.put("fullName", FullName);
-        payrollData.put("designation", Designation);
-        payrollData.put("rate", Rate);
-        payrollData.put("totalEarnings", TotalEarnings);
-        payrollData.put("totalDeduction", TotalDeduction);
-        payrollData.put("netPay", NetPay);
+        payrollData.put("fullName", fullName);
+        payrollData.put("designation", designation);
+        payrollData.put("rate", rate);
+        payrollData.put("totalEarnings", totalEarnings);
+        payrollData.put("totalDeduction", totalDeduction);
+        payrollData.put("netPay", netPay);
 
-        db.collection("payrolls").document(FullName).set(payrollData).addOnCompleteListener(new OnCompleteListener<Void>() {
+        DocumentReference payrollRef = db.collection("payroll").document(fullName).collection("payrollTitles").document(payrollTitle);
+        payrollRef.set(payrollData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(PayrollComputation.this, "Payslip stored in Database", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     Toast.makeText(PayrollComputation.this, "Failed to update Database", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
     private double parseDouble(String value) {
         try {
             return Double.parseDouble(value);

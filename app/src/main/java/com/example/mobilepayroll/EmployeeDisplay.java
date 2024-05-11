@@ -1,8 +1,10 @@
 package com.example.mobilepayroll;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,8 +23,15 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class EmployeeDisplay extends AppCompatActivity {
+    private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1; // Request code for editing
+
     FirebaseFirestore db;
     String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
+    ImageView DisplayEmpPic;
+    TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
+
+    Dialog dialog;
+    Button btnDialogNo, btnDialogYes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +39,31 @@ public class EmployeeDisplay extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_employee_display);
         db = FirebaseFirestore.getInstance();
-        ImageView DisplayEmpPic = findViewById(R.id.imageView0);
-        TextView DisplayEmpName = findViewById(R.id.displayName);
-        TextView DisplayEmpRole = findViewById(R.id.displayRole);
-        TextView DisplayEMpStatus = findViewById(R.id.displayStatus);
-        TextView DisplayEmpEmail = findViewById(R.id.displayEmail);
-        TextView DisplayPhoneNum = findViewById(R.id.displayPhone);
-        TextView Back_btn_toEmployeelist = findViewById(R.id.titleEmpInfo);
-        Button DeleteEmpBtn = findViewById(R.id.btnDelete);
+
+        DisplayEmpPic = findViewById(R.id.displayphoto);
+        DisplayEmpName = findViewById(R.id.displayName);
+        DisplayEmpRole = findViewById(R.id.displayRole);
+        DisplayEMpStatus = findViewById(R.id.displayStatus);
+        DisplayEmpEmail = findViewById(R.id.displayEmail);
+        DisplayPhoneNum = findViewById(R.id.displayPhone);
+
+        Button EditEmp_Btn = findViewById(R.id.edit_Emp_Info);
         Button PayrollBtn = findViewById(R.id.btnCreatePayroll);
+        Button DeleteEmpBtn = findViewById(R.id.Update_btn);
+
+        EditEmp_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToEditEmployee = new Intent(EmployeeDisplay.this, EditEmployee.class);
+                goToEditEmployee.putExtra("fullName", fullName);
+                goToEditEmployee.putExtra("department", department);
+                goToEditEmployee.putExtra("imageUrl", imageUrl);
+                goToEditEmployee.putExtra("status", status);
+                goToEditEmployee.putExtra("email", email);
+                goToEditEmployee.putExtra("phoneNumber", phoneNumber);
+                startActivityForResult(goToEditEmployee, EDIT_EMPLOYEE_REQUEST_CODE);
+            }
+        });
 
         PayrollBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,18 +71,11 @@ public class EmployeeDisplay extends AppCompatActivity {
                 GotoPayrollPage();
             }
         });
+
         DeleteEmpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteEmployee();
-            }
-        });
-
-        Back_btn_toEmployeelist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent GoToEmployeeList = new Intent(EmployeeDisplay.this, EmployeeList.class);
-                startActivity(GoToEmployeeList);
+                ShowDeleteDialog();
             }
         });
 
@@ -70,7 +89,6 @@ public class EmployeeDisplay extends AppCompatActivity {
             phoneNumber = intent.getStringExtra("phoneNumber");
             basicPay = intent.getStringExtra("basicPay");
 
-
             DisplayEmpName.setText(fullName);
             DisplayEmpRole.setText(department);
             Picasso.get().load(imageUrl).into(DisplayEmpPic);
@@ -78,6 +96,33 @@ public class EmployeeDisplay extends AppCompatActivity {
             DisplayEmpEmail.setText(email);
             DisplayPhoneNum.setText(phoneNumber);
         }
+    }
+
+    private void ShowDeleteDialog() {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.delete_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEmployee();
+                dialog.dismiss();
+            }
+        });
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void GotoPayrollPage() {
@@ -89,39 +134,51 @@ public class EmployeeDisplay extends AppCompatActivity {
     }
 
     private void deleteEmployee() {
-        Intent intent = getIntent();
-        if (intent != null) {
-            db.collection("employees").document(fullName)
-                    .delete()
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-                                storageRef.delete()
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(EmployeeDisplay.this, "Employee Deleted!", Toast.LENGTH_SHORT).show();
-                                                    Intent GotoEmployelist = new Intent(EmployeeDisplay.this, EmployeeList.class);
-                                                    startActivity(GotoEmployelist);
-                                                    finish();
-                                                } else {
-                                                    Toast.makeText(EmployeeDisplay.this, "Failed to delete image", Toast.LENGTH_SHORT).show();
-                                                }
+        db.collection("employees").document(fullName)
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                            storageRef.delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(EmployeeDisplay.this, "Employee Deleted!", Toast.LENGTH_SHORT).show();
+                                                Intent GotoEmployelist = new Intent(EmployeeDisplay.this, EmployeeList.class);
+                                                startActivity(GotoEmployelist);
+                                                finish();
+                                            } else {
+                                                Toast.makeText(EmployeeDisplay.this, "Failed to delete image", Toast.LENGTH_SHORT).show();
                                             }
-                                        });
-                            } else {
-                                Toast.makeText(EmployeeDisplay.this, "Failed to delete employee", Toast.LENGTH_SHORT).show();
-                            }
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(EmployeeDisplay.this, "Failed to delete employee", Toast.LENGTH_SHORT).show();
                         }
-                    });
-        }
+                    }
+                });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == EDIT_EMPLOYEE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            fullName = data.getStringExtra("fullName");
+            department = data.getStringExtra("department");
+            imageUrl = data.getStringExtra("imageUrl");
+            status = data.getStringExtra("status");
+            email = data.getStringExtra("email");
+            phoneNumber = data.getStringExtra("phoneNumber");
+
+            DisplayEmpName.setText(fullName);
+            DisplayEmpRole.setText(department);
+            Picasso.get().load(imageUrl).into(DisplayEmpPic);
+            DisplayEMpStatus.setText(status);
+            DisplayEmpEmail.setText(email);
+            DisplayPhoneNum.setText(phoneNumber);
+        }
+    }
 }
-
-
-
-

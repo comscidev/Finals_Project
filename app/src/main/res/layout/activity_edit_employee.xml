@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".EmployeeDisplay">
 
     <LinearLayout
@@ -19,31 +19,31 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="30dp">
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="20dp">
 
             <TextView
                 android:id="@+id/titleEmpInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:drawableStart="@drawable/baseline_keyboard_arrow_left_24"
+                android:ems="10"
                 android:text="Employee Info"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 android:textSize="26sp"
-                android:ems="10"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                android:drawableStart="@drawable/baseline_keyboard_arrow_left_24"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/displayphoto"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/emprofile_icon"
-                app:shapeAppearanceOverlay="@style/roundImageView">
+                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"
+                app:shapeAppearanceOverlay="@style/roundImageView"
+                app:srcCompat="@drawable/emprofile_icon">
 
             </com.google.android.material.imageview.ShapeableImageView>
 
@@ -54,40 +54,24 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="35dp"
                 android:text="Wes Fesley"
-                android:textSize="22sp"
                 android:textColor="@color/black"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"/>
+                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo" />
 
-            <TextView
+            <EditText
                 android:id="@+id/displayRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="15dp"
-                android:text="Support"
-                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:hint="Support"
                 android:textColor="@color/black"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayName"/>
-
-            <Button
-                android:id="@+id/edit_Emp_Info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:backgroundTint="@color/darkblue"
-                android:gravity="center"
-                android:text="Edit Account"
-                android:textColor="@color/white"
-                app:cornerRadius="10dp"
-                app:layout_constraintBottom_toTopOf="@+id/linedivider"
-                app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayRole"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@id/displayName" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/linedivider"
@@ -103,113 +87,100 @@
                 android:id="@+id/titleStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="10dp"
-                android:text="  Employement Status"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:drawableStart="@drawable/round_person_pin_24"
-                app:layout_constraintTop_toBottomOf="@id/linedivider"/>
+                android:text="  Employement Status"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/linedivider" />
 
-            <TextView
+            <EditText
+
                 android:id="@+id/displayStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:hint="Regular"
-                android:textSize="17sp"
                 android:textColor="@color/black"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/titleStatus"/>
+                app:layout_constraintTop_toBottomOf="@id/titleStatus" />
 
             <TextView
                 android:id="@+id/titleEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:text="  Email Address"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:drawableStart="@drawable/baseline_email_24"
-                app:layout_constraintTop_toBottomOf="@id/displayStatus"/>
+                android:text="  Email Address"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/displayStatus"
+                tools:layout_editor_absoluteX="36dp" />
 
-            <TextView
+            <EditText
                 android:id="@+id/displayEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:hint="email@gmail.com"
-                android:textSize="17sp"
                 android:textColor="@color/black"
+                android:textSize="17sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/titleEmail"/>
+                app:layout_constraintTop_toBottomOf="@id/titleEmail" />
 
             <TextView
                 android:id="@+id/titlePhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginEnd="10dp"
-                android:text="  Phone"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:drawableStart="@drawable/round_phone_24"
-                app:layout_constraintTop_toBottomOf="@id/displayEmail"/>
-            <TextView
+                android:text="  Phone"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/displayEmail" />
+
+            <EditText
                 android:id="@+id/displayPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
                 android:hint="09xx-xxx-xxxx"
+                android:textColor="@color/black"
                 android:textSize="17sp"
-                android:textColor="@color/black"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/titlePhone"/>
-
-            <Button
-                android:id="@+id/btnCreatePayroll"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:backgroundTint="@color/transparent"
-                android:gravity="center"
-                android:letterSpacing="0.2"
-                android:text="Create Payroll"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                app:cornerRadius="15dp"
-                app:layout_constraintBottom_toTopOf="@id/Update_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:strokeWidth="1dp" />
+                app:layout_constraintTop_toBottomOf="@id/titlePhone" />
 
             <Button
                 android:id="@+id/Update_btn"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="16dp"
                 android:backgroundTint="@color/lightred"
                 android:gravity="center"
-                android:text="Delete Account"
                 android:letterSpacing="0.2"
+                android:text="Update Account
+"
                 android:textSize="18sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/displayPhone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 </LinearLayout>

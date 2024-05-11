@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="@drawable/profile_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/profile_bg"
     tools:context=".Edit_Profilepage">
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -68,13 +67,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
+        android:backgroundTint="@android:color/transparent"
         android:hint="Wes Fesley"
-        android:textAlignment="center"
         android:inputType="text"
+        android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:backgroundTint="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="@id/profile_image"
         app:layout_constraintStart_toStartOf="@id/profile_image"
         app:layout_constraintTop_toBottomOf="@id/profile_image" />
@@ -119,9 +118,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="email@gmail.com"
                 android:inputType="text"
-                android:backgroundTint="@android:color/transparent"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -157,9 +156,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="department"
                 android:inputType="textEmailAddress"
-                android:backgroundTint="@android:color/transparent"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -195,20 +194,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:backgroundTint="@android:color/transparent"
                 android:hint="password"
                 android:inputType="textPassword"
-                android:backgroundTint="@android:color/transparent"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
         </LinearLayout>
 
     </LinearLayout>
+
     <Button
         android:id="@+id/save_btn"
-        android:layout_width="0dp"
+        android:layout_width="371dp"
         android:layout_height="60dp"
-        android:layout_marginTop="5dp"
         android:backgroundTint="@color/brand_color"
         android:gravity="center"
         android:text="Save Changes"
@@ -217,8 +216,16 @@
         android:textStyle="bold"
         app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/linearlayout2"
-        app:layout_constraintStart_toStartOf="@id/linearlayout2"
-        app:layout_constraintTop_toBottomOf="@id/linearlayout2"
-        app:layout_constraintVertical_bias="0.864" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearlayout2" />
+
+    <Button
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        app:layout_constraintBottom_toTopOf="@+id/save_btn"
+        app:layout_constraintTop_toBottomOf="@+id/linearlayout2"
+        tools:layout_editor_absoluteX="165dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
