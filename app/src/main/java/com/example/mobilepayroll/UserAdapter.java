@@ -1,6 +1,5 @@
 package com.example.mobilepayroll;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,61 +16,55 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.squareup.picasso.Picasso;
 
-public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter.Holder> {
-
-    private Context context;
-
-    public UserAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options, Context context) {
+public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter.holder> {
+    public UserAdapter(@NonNull FirestoreRecyclerOptions<UserModel> options) {
         super(options);
-        this.context = context;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull Holder holder, int position, @NonNull UserModel userModel) {
-        holder.bind(userModel);
+    protected void onBindViewHolder(@NonNull UserAdapter.holder holder, int i, @NonNull UserModel userModel) {
+        holder.fullName.setText(userModel.fullName);
+        holder.department.setText(userModel.department);
+        Picasso.get().load(userModel.imageUrl).into(holder.employee_pic);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), EmployeeDisplay.class);
+                intent.putExtra("fullName", userModel.fullName);
+                intent.putExtra("department", userModel.department);
+                intent.putExtra("imageUrl", userModel.imageUrl);
+                intent.putExtra("email", userModel.email);
+                intent.putExtra("status", userModel.status);
+                intent.putExtra("phoneNumber", userModel.phoneNumber);
+                intent.putExtra("basicPay", userModel.basicPay);
+                v.getContext().startActivity(intent);
+                Toast.makeText(v.getContext(), "You are viewing " + userModel.fullName + "'s profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @NonNull
     @Override
-    public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public UserAdapter.holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_data, parent, false);
-        return new Holder(view);
+        return new holder(view);
     }
 
-    class Holder extends RecyclerView.ViewHolder {
+    static class holder extends RecyclerView.ViewHolder {
         TextView fullName, department;
         ImageView employee_pic;
         CardView cardView;
-
-        public Holder(@NonNull View itemView) {
+        public holder(@NonNull View itemView) {
             super(itemView);
-            fullName = itemView.findViewById(R.id.textViewName);
-            department = itemView.findViewById(R.id.textJobRole);
-            employee_pic = itemView.findViewById(R.id.emp_pic);
-            cardView = itemView.findViewById(R.id.Card_View);
-        }
+            View view = itemView;
 
-        public void bind(UserModel userModel) {
-            fullName.setText("Name: " + userModel.fullName);
-            department.setText("Department: " + userModel.department);
-            Picasso.get().load(userModel.imageUrl).into(employee_pic);
-
-            cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, EmployeeDisplay.class);
-                    intent.putExtra("fullName", userModel.fullName);
-                    intent.putExtra("department", userModel.department);
-                    intent.putExtra("imageUrl", userModel.imageUrl);
-                    intent.putExtra("email", userModel.email);
-                    intent.putExtra("status", userModel.status);
-                    intent.putExtra("phoneNumber", userModel.phoneNumber);
-                    intent.putExtra("basicPay", userModel.basicPay);
-                    context.startActivity(intent);
-                    Toast.makeText(context, "You are viewing " + userModel.fullName + "'s profile", Toast.LENGTH_SHORT).show();
-                }
-            });
+            fullName = view.findViewById(R.id.textViewName);
+            department = view.findViewById(R.id.textJobRole);
+            employee_pic = view.findViewById(R.id.emp_pic);
+            cardView = view.findViewById(R.id.Card_View);
         }
     }
+
 }
