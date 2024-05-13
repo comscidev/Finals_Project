@@ -76,7 +76,7 @@ public class AddEmployeePicture extends AppCompatActivity {
                                     saveEmployeeToFirestore(imageUrl);
                                 } else {
                                     Toast.makeText(AddEmployeePicture.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
-                                }
+                                      }
                             });
                         } else {
                             Toast.makeText(AddEmployeePicture.this, "Upload Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

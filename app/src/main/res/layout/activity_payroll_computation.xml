@@ -286,7 +286,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginStart="5dp"
                         android:padding="5dp"
-                        android:text="Total Weekly Over time Hours"
+                        android:text="Total Overtime in a week"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -296,6 +296,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:backgroundTint="@android:color/transparent"
+                        android:hint="no. of hours"
                         android:inputType="number"
                         android:padding="5dp"
                         android:textAlignment="viewEnd"
@@ -324,6 +325,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
                         android:backgroundTint="@android:color/transparent"
+                        android:hint="Total no. of Days"
                         android:inputType="number"
                         android:padding="5dp"
                         android:textAlignment="viewEnd"

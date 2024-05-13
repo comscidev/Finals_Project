@@ -45,10 +45,11 @@ public class EmployeeList extends AppCompatActivity {
 
     RecyclerView recyclerView;
 
-    TextView textAdmin, textAll;
+    TextView textAdmin, textAll, textProduction, textSupport, textLogistics;
     UserAdapter userAdapter ;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +93,32 @@ public class EmployeeList extends AppCompatActivity {
                 recyclerViewByDepartment("ALL");
             }
         });
+
+        textProduction = findViewById(R.id.textProduction);
+        textProduction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Production");
+            }
+        });
+
+        textSupport = findViewById(R.id.textSupport);
+        textSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Support");
+            }
+        });
+
+        textLogistics = findViewById(R.id.textLogistics);
+        textLogistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Logistics");
+            }
+        });
+
+
 
 
 
