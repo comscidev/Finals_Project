@@ -30,19 +30,19 @@ import java.util.Map;
 
 public class PayrollComputation extends AppCompatActivity {
 
-    Dialog dialog;
-    Button btnDialogNo, btnDialogYes;
+    private Dialog dialog;
+    private Button btnDialogNo, btnDialogYes;
 
-    TextView Emp_Name, Emp_Rate, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
-            Emp_OverTimePay,
-            DisplayNetPay,Emp_BasicPay, CancelPayroll, Emp_OvertimeRate;
+    private TextView Emp_Rate, Emp_Name, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
+            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay;
 
-    EditText Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance, Emp_PayrollTitle,
+    private EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
+            Payroll_Tittle,
             Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
 
-    Button Savebtn;
+    private Button Savebtn;
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,6 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayTotalEarnings = findViewById(R.id.DisplayTotalEarnings);
         DisplayTotalDeduction = findViewById(R.id.DisplayTotalDeductions);
         Emp_Tax = findViewById(R.id.EmployeeTax);
-        Emp_PayrollTitle = findViewById(R.id.Payslip_Title);
         Emp_SSS = findViewById(R.id.EmployeeSSS);
         Emp_PHealth = findViewById(R.id.EmployeePhilHealth);
         Emp_PagIbig = findViewById(R.id.EmployeePagIbig);
@@ -73,6 +72,8 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayNetPay = findViewById(R.id.DisplayNetPay);
         CancelPayroll = findViewById(R.id.cancel_btn);
         Savebtn = findViewById(R.id.saveComputationBtn);
+        Payroll_Tittle = findViewById(R.id.Payslip_Title);
+
 
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.cancel_dialog);
@@ -83,24 +84,25 @@ public class PayrollComputation extends AppCompatActivity {
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
 
-        // Automatically set employee's name and department from intent
         Intent intent = getIntent();
         if (intent != null) {
             String fullName = intent.getStringExtra("fullName");
             String department = intent.getStringExtra("department");
-            String basicRate = intent.getStringExtra("basicPay");
+            String basicPay = intent.getStringExtra("basicPay");
             Emp_Name.setText(fullName);
             Emp_Designation.setText(department);
-            Emp_Rate.setText(basicRate);
+            Emp_Rate.setText(basicPay);
         }
 
         Savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                savePayrollData();
-
+                    savePayrollData();
+                    Intent GotoPayrollAgain = new Intent(PayrollComputation.this, PayrollComputation.class);
+                    startActivity(GotoPayrollAgain);
             }
         });
+
 
         btnDialogNo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +110,6 @@ public class PayrollComputation extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
         btnDialogYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +159,7 @@ public class PayrollComputation extends AppCompatActivity {
 
     private void loadUserData(String fullName) {
         CollectionReference employeesRef = db.collection("employees");
-        Query query = employeesRef.whereEqualTo("fullName", fullName).limit(1);
+        Query query = employeesRef.whereEqualTo("fullName", fullName);
 
         query.get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
@@ -210,20 +211,18 @@ public class PayrollComputation extends AppCompatActivity {
         double EmpRate = parseDouble(Emp_Rate.getText().toString());
         double TotalDaysOfWork = parseDouble(Emp_Total_Days.getText().toString());
         double EmpBasicPay = EmpRate * TotalDaysOfWork;
-        double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString());
-        double OvertimeRate = (EmpRate / 8 * 1.25);
-        double OvertimePayment = OvertimeRate * TotalOverTimePay;
+        double OvertimeRate = EmpRate / 8 * 1.25;
+        double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString()) * OvertimeRate;
         double AdditionalPayment = parseDouble(Emp_AdditionalPayment.getText().toString());
         double SpecialAllowance = parseDouble(Emp_SpecialAllowance.getText().toString());
-        double TotalEarnings = EmpBasicPay + OvertimePayment + SpecialAllowance + AdditionalPayment;
+        double TotalEarnings = EmpBasicPay + TotalOverTimePay + SpecialAllowance + AdditionalPayment;
 
         Emp_OvertimeRate.setText(String.valueOf(OvertimeRate));
-        Emp_OverTimePay.setText(String.valueOf(OvertimePayment));
+        Emp_OverTimePay.setText(String.valueOf(TotalOverTimePay));
         Emp_BasicPay.setText(String.valueOf(EmpBasicPay));
         DisplayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
-
-        calculateTotalNetPay();
     }
+
 
     private void calculateTotalDeduction() {
         double Emptax = parseDouble(Emp_Tax.getText().toString());
@@ -248,37 +247,27 @@ public class PayrollComputation extends AppCompatActivity {
     }
 
     private void savePayrollData() {
-        String FullName = Emp_Name.getText().toString().trim();
-        String Designation = Emp_Designation.getText().toString();
-        String PayrollTitle = Emp_PayrollTitle.getText().toString();
-
-        // Check if the Payroll Title is empty
-        if (PayrollTitle.isEmpty()) {
-            Toast.makeText(PayrollComputation.this, "Please fill in the Payroll Title", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        double Rate = parseDouble(Emp_Rate.getText().toString());
-        double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
-        double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
-        double NetPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
+        String fullName = Emp_Name.getText().toString().trim();
+        String designation = Emp_Designation.getText().toString();
+        String payrollTitle = Payroll_Tittle.getText().toString();
+        double rate = parseDouble(Emp_Rate.getText().toString());
+        double totalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
+        double totalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
+        double netPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
 
         Map<String, Object> payrollData = new HashMap<>();
-        payrollData.put("fullName", FullName);
-        payrollData.put("designation", Designation);
-        payrollData.put("PayrollTitle", PayrollTitle);
-        payrollData.put("rate", Rate);
-        payrollData.put("totalEarnings", TotalEarnings);
-        payrollData.put("totalDeduction", TotalDeduction);
-        payrollData.put("netPay", NetPay);
+        payrollData.put("fullName", fullName);
+        payrollData.put("designation", designation);
+        payrollData.put("rate", rate);
+        payrollData.put("totalEarnings", totalEarnings);
+        payrollData.put("totalDeduction", totalDeduction);
+        payrollData.put("netPay", netPay);
 
-        DocumentReference payrollRef = db.collection("payroll").document(FullName).collection("payrollTitles").document(PayrollTitle);
+        DocumentReference payrollRef = db.collection("payroll").document(fullName).collection("payrollTitles").document(payrollTitle);
         payrollRef.set(payrollData).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()){
-                    Intent GotoPayrollAgain = new Intent(PayrollComputation.this, EmployeeList.class);
-                    startActivity(GotoPayrollAgain);
+                if (task.isSuccessful()) {
                     Toast.makeText(PayrollComputation.this, "Payslip stored in Database", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PayrollComputation.this, "Failed to update Database", Toast.LENGTH_SHORT).show();
@@ -286,8 +275,6 @@ public class PayrollComputation extends AppCompatActivity {
             }
         });
     }
-
-
 
     private double parseDouble(String value) {
         try {

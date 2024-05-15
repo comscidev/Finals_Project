@@ -23,12 +23,12 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class EmployeeDisplay extends AppCompatActivity {
-    private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1; // Request code for editing
+    private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1;
 
-    FirebaseFirestore db;
-    String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
-    ImageView DisplayEmpPic;
-    TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
+   private FirebaseFirestore db;
+    private String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
+    private ImageView DisplayEmpPic;
+    private TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
 
     Dialog dialog;
     Button btnDialogNo, btnDialogYes;
@@ -88,7 +88,6 @@ public class EmployeeDisplay extends AppCompatActivity {
             email = intent.getStringExtra("email");
             phoneNumber = intent.getStringExtra("phoneNumber");
             basicPay = intent.getStringExtra("basicPay");
-
 
             DisplayEmpName.setText(fullName);
             DisplayEmpRole.setText(department);

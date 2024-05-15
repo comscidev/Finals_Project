@@ -1,4 +1,3 @@
-
 package com.example.mobilepayroll;
 
 import android.app.Dialog;
@@ -30,8 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profilepage_function extends AppCompatActivity {
 
-    Dialog dialog;
-    Button btnDialogCancel, btnDialogLogout;
+    private Dialog dialog;
+    private Button btnDialogCancel, btnDialogLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +54,7 @@ public class Profilepage_function extends AppCompatActivity {
         btnDialogLogout = dialog.findViewById(R.id.btnDialogLogout);
 
         ImageView adminProfileImage = findViewById(R.id.admin_profpic);
-        ImageButton BackToEmployeeList = findViewById(R.id.backIcon);
+        TextView BackToEmployeeList = findViewById(R.id.titleProfile);
 
         String userID = auth.getCurrentUser().getUid();
         DocumentReference documentReference = db.collection("users").document(userID);
@@ -65,14 +64,26 @@ public class Profilepage_function extends AppCompatActivity {
                                 @Nullable FirebaseFirestoreException error) {
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    displayName.setText(documentSnapshot.getString("fullname"));
+                    displayName.setText(documentSnapshot.getString("fullName"));
                     displayPosition.setText(documentSnapshot.getString("position"));
                     displayEmail.setText(documentSnapshot.getString("email"));
 
                     String imageUrl = documentSnapshot.getString("profileImageUrl");
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        Picasso.get().load(imageUrl).into(adminProfileImage);
+                        Picasso.get()
+                                .load(Uri.parse(imageUrl))
+                                .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache first
+                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Disable caching
+                                .into(adminProfileImage, new Callback() {
+                                    @Override
+                                    public void onSuccess() {
+                                    }
 
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Picasso.get().load(Uri.parse(imageUrl)).into(adminProfileImage);
+                                    }
+                                });
                     } else {
                         adminProfileImage.setImageResource(R.drawable.default_image);
                     }
@@ -111,11 +122,11 @@ public class Profilepage_function extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-
+        
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                dialog.show();
+                public void onClick(View v) {
+                    dialog.show();
             }
         });
         BackToEmployeeList.setOnClickListener(new View.OnClickListener() {
