@@ -1,12 +1,15 @@
 package com.example.mobilepayroll;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -23,6 +26,22 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
         holder.fullName.setText(userModel.fullName);
         holder.department.setText(userModel.department);
         Picasso.get().load(userModel.imageUrl).into(holder.employee_pic);
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), EmployeeDisplay.class);
+                intent.putExtra("fullName", userModel.fullName);
+                intent.putExtra("department", userModel.department);
+                intent.putExtra("imageUrl", userModel.imageUrl);
+                intent.putExtra("email", userModel.email);
+                intent.putExtra("status", userModel.status);
+                intent.putExtra("phoneNumber", userModel.phoneNumber);
+                intent.putExtra("basicPay", userModel.basicPay);
+                v.getContext().startActivity(intent);
+                Toast.makeText(v.getContext(), "You are viewing " + userModel.fullName + "'s profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     @NonNull
@@ -36,6 +55,7 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
     static class holder extends RecyclerView.ViewHolder {
         TextView fullName, department;
         ImageView employee_pic;
+        CardView cardView;
         public holder(@NonNull View itemView) {
             super(itemView);
             View view = itemView;
@@ -43,6 +63,7 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
             fullName = view.findViewById(R.id.textViewName);
             department = view.findViewById(R.id.textJobRole);
             employee_pic = view.findViewById(R.id.emp_pic);
+            cardView = view.findViewById(R.id.Card_View);
         }
     }
 

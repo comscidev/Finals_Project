@@ -1,43 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".EmployeeDisplay">
+
+    <LinearLayout
+        android:id="@+id/linearInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/empdetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="35dp">
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="24dp">
 
             <TextView
                 android:id="@+id/titleEmpInfo"
-                android:layout_width="210dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Employee Info"
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:textSize="26sp"
                 android:ems="10"
-                app:layout_constraintTop_toTopOf="parent"
+                android:text="Edit Information"
+                android:textColor="@color/black"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                app:drawableStartCompat="@drawable/baseline_keyboard_arrow_left_24"
                 app:layout_constraintStart_toStartOf="parent"
-                android:drawableStart="@drawable/baseline_keyboard_arrow_left_24"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/displayphoto"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="30dp"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"
                 app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/emprofile_icon"
-                app:shapeAppearanceOverlay="@style/roundImageView">
+                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"
+                app:shapeAppearanceOverlay="@style/roundImageView"
+                app:srcCompat="@drawable/emprofile_icon">
 
             </com.google.android.material.imageview.ShapeableImageView>
 
@@ -48,40 +54,25 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="35dp"
                 android:text="Wes Fesley"
-                android:textSize="22sp"
                 android:textColor="@color/black"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"/>
+                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo" />
 
-            <TextView
+            <EditText
                 android:id="@+id/displayRole"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
                 android:layout_marginStart="15dp"
-                android:text="Support"
-                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:hint="Support"
                 android:textColor="@color/black"
+                android:textSize="18sp"
                 android:textStyle="bold"
+                android:backgroundTint="@android:color/transparent"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayName"/>
-
-            <Button
-                android:id="@+id/edit_Emp_Info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp"
-                android:backgroundTint="@color/darkblue"
-                android:gravity="center"
-                android:text="Edit Account"
-                android:textColor="@color/white"
-                app:cornerRadius="10dp"
-                app:layout_constraintBottom_toTopOf="@+id/linedivider"
-                app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayRole"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@id/displayName" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/linedivider"
@@ -97,17 +88,17 @@
                 android:id="@+id/titleStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="10dp"
-                android:text="  Employement Status"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:textStyle="bold"
                 android:drawableStart="@drawable/round_person_pin_24"
-                app:layout_constraintTop_toBottomOf="@id/linedivider"/>
+                android:text="  Employement Status"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/linedivider" />
 
-            <TextView
+            <EditText
                 android:id="@+id/displayStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -118,7 +109,8 @@
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/titleStatus"/>
+                android:backgroundTint="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/titleStatus" />
 
             <TextView
                 android:id="@+id/titleEmail"
@@ -134,7 +126,7 @@
                 android:drawableStart="@drawable/baseline_email_24"
                 app:layout_constraintTop_toBottomOf="@id/displayStatus"/>
 
-            <TextView
+            <EditText
                 android:id="@+id/displayEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -145,7 +137,8 @@
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/titleEmail"/>
+                android:backgroundTint="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/titleEmail" />
 
             <TextView
                 android:id="@+id/titlePhone"
@@ -159,9 +152,9 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:drawableStart="@drawable/round_phone_24"
-                app:layout_constraintTop_toBottomOf="@id/displayEmail"/>
+                app:layout_constraintTop_toBottomOf="@id/displayEmail" />
 
-            <TextView
+            <EditText
                 android:id="@+id/displayPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,24 +165,8 @@
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
+                android:backgroundTint="@android:color/transparent"
                 app:layout_constraintTop_toBottomOf="@id/titlePhone"/>
-
-            <Button
-                android:id="@+id/btnCreatePayroll"
-                android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                android:letterSpacing="0.2"
-                android:text="Create Payroll"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                android:backgroundTint="@color/transparent"
-                app:cornerRadius="15dp"
-                app:layout_constraintBottom_toTopOf="@id/Update_btn"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:strokeWidth="1dp" />
 
             <Button
                 android:id="@+id/Update_btn"
@@ -197,14 +174,15 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="30dp"
-                android:backgroundTint="@color/lightred"
+                android:backgroundTint="@color/darkblue"
                 android:gravity="center"
-                android:text="Delete Account"
+                android:text="Update Changes"
                 android:letterSpacing="0.2"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

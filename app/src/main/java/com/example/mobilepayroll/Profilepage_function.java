@@ -43,6 +43,7 @@ public class Profilepage_function extends AppCompatActivity {
         TextView displayEmail = findViewById(R.id.profileEmail);
         Button editProfile = findViewById(R.id.EditProfile);
         Button logout = findViewById(R.id.logout_btn);
+
         dialog = new Dialog(Profilepage_function.this);
         dialog.setContentView(R.layout.logout_dialog);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -52,8 +53,8 @@ public class Profilepage_function extends AppCompatActivity {
         btnDialogCancel = dialog.findViewById(R.id.btnDialogCancel);
         btnDialogLogout = dialog.findViewById(R.id.btnDialogLogout);
 
-        ImageView adminProfileImage = findViewById(R.id.admin_profpic); // Check this ID
-        ImageButton BackToEmployeeList = findViewById(R.id.backIcon);
+        ImageView adminProfileImage = findViewById(R.id.admin_profpic);
+        TextView BackToEmployeeList = findViewById(R.id.titleProfile);
 
         String userID = auth.getCurrentUser().getUid();
         DocumentReference documentReference = db.collection("users").document(userID);

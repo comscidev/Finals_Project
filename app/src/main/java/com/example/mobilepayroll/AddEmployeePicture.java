@@ -50,14 +50,11 @@ public class AddEmployeePicture extends AppCompatActivity {
                 Toast.makeText(AddEmployeePicture.this, "No image selected", Toast.LENGTH_SHORT).show();
             }
         });
-
-
         backToEmployeeList.setOnClickListener(v -> {
             Intent backIntent = new Intent(AddEmployeePicture.this, EmployeeList.class);
             startActivity(backIntent);
         });
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -66,7 +63,6 @@ public class AddEmployeePicture extends AppCompatActivity {
             Picasso.get().load(imageUri).into(employeeProfPic);
         }
     }
-
     private void uploadImage(String email) {
         if (imageUri != null) {
             StorageReference ref = storageReference.child("employees/" + email + "/" + System.currentTimeMillis() + ".jpg");
@@ -90,8 +86,6 @@ public class AddEmployeePicture extends AppCompatActivity {
             Toast.makeText(AddEmployeePicture.this, "No image selected", Toast.LENGTH_SHORT).show();
         }
     }
-
-
     private void saveEmployeeToFirestore(String imageUrl) {
         Intent intent = getIntent();
         String fullName = intent.getStringExtra("FullName");
@@ -100,7 +94,6 @@ public class AddEmployeePicture extends AppCompatActivity {
         String department = intent.getStringExtra("Department");
         String basicPay = intent.getStringExtra("BasicPay");
         String  status = intent.getStringExtra("Status");
-
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl,status);
