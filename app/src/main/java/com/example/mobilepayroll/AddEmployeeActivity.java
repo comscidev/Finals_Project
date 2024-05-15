@@ -11,30 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class AddEmployeeActivity extends AppCompatActivity {
 
-    String[] items = {"Regular", "Probationary", "Part-time"};
-    AutoCompleteTextView autoCompleteTxt;
-    ArrayAdapter<String> adapterItems;
+    private String[] items = {"Regular", "Probationary", "Part-time"};
+    private AutoCompleteTextView autoCompleteTxt;
+    private ArrayAdapter<String> adapterItems;
+    private EditText empFullName, empEmail, empPhone, empDepartment, empBasicPay;
+    private Button button;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee);
-        EditText empFullName = findViewById(R.id.add_fname);
-        EditText empEmail = findViewById(R.id.add_email);
-        EditText empPhone = findViewById(R.id.add_phone);
-        EditText empDepartment = findViewById(R.id.add_designation);
-        EditText empBasicPay = findViewById(R.id.add_basicpay);
-        Button button = findViewById(R.id.next_btn);
+
+        InitializeUI();
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,41 +38,63 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 String getBasicPay = empBasicPay.getText().toString();
                 String getEmpStatus = autoCompleteTxt.getText().toString();
 
-                if (TextUtils.isEmpty(getFullName) || TextUtils.isEmpty(getEmail) || TextUtils.isEmpty(getDepartment) || TextUtils.isEmpty(getBasicPay) || TextUtils.isEmpty(getPhoneNumber)) {
-                    Toast.makeText(AddEmployeeActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-                    return;
+                if (validateInputs(getFullName, getEmail, getPhoneNumber, getDepartment, getBasicPay, getEmpStatus)) {
+                    navigateToAddEmployeePicture(getFullName, getEmail, getPhoneNumber, getDepartment, getBasicPay, getEmpStatus);
                 }
-
-                if (!isValidPhoneNumber(getPhoneNumber)) {
-                    Toast.makeText(AddEmployeeActivity.this, "Invalid phone number format. Please enter only numbers", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (!TextUtils.isDigitsOnly(getBasicPay)) {
-                    Toast.makeText(AddEmployeeActivity.this, "Invalid basic pay format. Please enter only numbers", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                Intent intent = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
-                intent.putExtra("FullName", getFullName);
-                intent.putExtra("Email", getEmail);
-                intent.putExtra("PhoneNumber", getPhoneNumber);
-                intent.putExtra("Department", getDepartment);
-                intent.putExtra("BasicPay", getBasicPay);
-                intent.putExtra("Status",getEmpStatus);
-                startActivity(intent);
             }
         });
+    }
+
+    private void InitializeUI() {
+        empFullName = findViewById(R.id.add_fname);
+        empEmail = findViewById(R.id.add_email);
+        empPhone = findViewById(R.id.add_phone);
+        empDepartment = findViewById(R.id.add_designation);
+        empBasicPay = findViewById(R.id.add_basicpay);
+        button = findViewById(R.id.next_btn);
+
         autoCompleteTxt = findViewById(R.id.auto_complete_txt);
         adapterItems = new ArrayAdapter<>(this, R.layout.list_status, items);
         autoCompleteTxt.setAdapter(adapterItems);
         autoCompleteTxt.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
             }
         });
     }
-    public boolean isValidPhoneNumber(String phoneNumber) {
+
+    private boolean validateInputs(String fullName, String email, String phoneNumber, String department, String basicPay, String empStatus) {
+        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(department) || TextUtils.isEmpty(basicPay) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(empStatus)) {
+            Toast.makeText(AddEmployeeActivity.this, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+            Toast.makeText(AddEmployeeActivity.this, "Invalid phone number format. Please enter only numbers", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!TextUtils.isDigitsOnly(basicPay)) {
+            Toast.makeText(AddEmployeeActivity.this, "Invalid basic pay format. Please enter only numbers", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void navigateToAddEmployeePicture(String fullName, String email, String phoneNumber, String department, String basicPay, String empStatus) {
+        Intent intent = new Intent(AddEmployeeActivity.this, AddEmployeePicture.class);
+        intent.putExtra("FullName", fullName);
+        intent.putExtra("Email", email);
+        intent.putExtra("PhoneNumber", phoneNumber);
+        intent.putExtra("Department", department);
+        intent.putExtra("BasicPay", basicPay);
+        intent.putExtra("Status", empStatus);
+        startActivity(intent);
+    }
+
+    private boolean isValidPhoneNumber(String phoneNumber) {
         return phoneNumber.matches("^[0-9()-]+$");
     }
 }

@@ -12,9 +12,6 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -49,7 +46,7 @@ public class EmployeeList extends AppCompatActivity {
     UserAdapter userAdapter ;
     BottomNavigationView bottomNavigationView;
     FirebaseFirestore db;
-    @SuppressLint("WrongViewCast")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,10 +114,6 @@ public class EmployeeList extends AppCompatActivity {
                 recyclerViewByDepartment("Logistics");
             }
         });
-
-
-
-
 
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {

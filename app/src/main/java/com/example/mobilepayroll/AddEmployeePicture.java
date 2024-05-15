@@ -19,9 +19,9 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class AddEmployeePicture extends AppCompatActivity {
-    ImageView employeeProfPic;
-    StorageReference storageReference;
-    Uri imageUri;
+    private ImageView employeeProfPic;
+    private StorageReference storageReference;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

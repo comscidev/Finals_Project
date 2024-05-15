@@ -1,3 +1,4 @@
+
 package com.example.mobilepayroll;
 
 import android.app.Dialog;
@@ -70,20 +71,8 @@ public class Profilepage_function extends AppCompatActivity {
 
                     String imageUrl = documentSnapshot.getString("profileImageUrl");
                     if (imageUrl != null && !imageUrl.isEmpty()) {
-                        Picasso.get()
-                                .load(Uri.parse(imageUrl))
-                                .networkPolicy(NetworkPolicy.OFFLINE) // Load from cache first
-                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE) // Disable caching
-                                .into(adminProfileImage, new Callback() {
-                                    @Override
-                                    public void onSuccess() {
-                                    }
+                        Picasso.get().load(imageUrl).into(adminProfileImage);
 
-                                    @Override
-                                    public void onError(Exception e) {
-                                        Picasso.get().load(Uri.parse(imageUrl)).into(adminProfileImage);
-                                    }
-                                });
                     } else {
                         adminProfileImage.setImageResource(R.drawable.default_image);
                     }
@@ -122,11 +111,11 @@ public class Profilepage_function extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
-        
+
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
-                public void onClick(View v) {
-                    dialog.show();
+            public void onClick(View v) {
+                dialog.show();
             }
         });
         BackToEmployeeList.setOnClickListener(new View.OnClickListener() {

@@ -105,9 +105,9 @@
 
             <TextView
                 android:id="@+id/Email"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.25"
                 android:text="Email"
                 android:textColor="@color/gray"
                 android:textSize="18sp"
@@ -115,12 +115,12 @@
 
             <EditText
                 android:id="@+id/edit_profile_Email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/transparent"
                 android:hint="email@gmail.com"
-                android:inputType="text"
+                android:inputType="textMultiLine"
                 android:textAlignment="viewEnd"
                 android:textColor="@color/black"
                 android:textSize="18sp" />

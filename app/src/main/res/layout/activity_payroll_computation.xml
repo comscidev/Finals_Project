@@ -123,6 +123,19 @@
 
                 </LinearLayout>
 
+                <EditText
+                    android:id="@+id/EmployeeWeeklyHrs"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="5dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="no. of hours"
+                    android:inputType="number"
+                    android:padding="5dp"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
             </LinearLayout>
 
             <TextView
@@ -290,18 +303,6 @@
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
-                    <EditText
-                        android:id="@+id/EmployeeWeeklyHrs"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="5dp"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="no. of hours"
-                        android:inputType="number"
-                        android:padding="5dp"
-                        android:textAlignment="viewEnd"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
                 </LinearLayout>
 
                 <LinearLayout

@@ -1,11 +1,10 @@
-
 package com.example.mobilepayroll;
 
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,121 +15,127 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    FirebaseAuth Auth;
+    private FirebaseAuth auth;
+    private EditText emailEditText;
+    private EditText passwordEditText;
+    private Button loginButton;
+    private TextView signUpLink;
+    private TextView forgotPasswordLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Auth = FirebaseAuth.getInstance();
-        EditText usernameEditText = findViewById(R.id.loginEmail);
-        EditText passwordEditText = findViewById(R.id.loginPassword);
-        Button loginButton = findViewById(R.id.login_btn);
-        TextView SignUpPage = findViewById(R.id.signup_link);
-        TextView Forgot_Password = findViewById(R.id.ForgotPass);
+        auth = FirebaseAuth.getInstance();
 
-        loginButton.setOnClickListener(v -> {
-            String getEmail = usernameEditText.getText().toString();
-            String getPassword = passwordEditText.getText().toString();
+        initializeUI();
 
-            if (TextUtils.isEmpty(getEmail) || TextUtils.isEmpty((getPassword))) {
-                Toast.makeText(MainActivity.this, "Please fill in all fields",
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            Auth.signInWithEmailAndPassword(getEmail, getPassword)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            if (Auth.getCurrentUser().isEmailVerified()) {
-                                Intent intent = new Intent(MainActivity.this,
-                                        EmployeeList.class);
-                                startActivity(intent);
-                            } else {
-                                Toast.makeText(MainActivity.this, "Verify email first",
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        } else {
-                            if (task.getException() instanceof FirebaseAuthInvalidUserException) {
-                                Toast.makeText(MainActivity.this,
-                                        "Email address not found", Toast.LENGTH_SHORT).show();
-                            } else if (task.getException() instanceof
-                                    FirebaseAuthInvalidCredentialsException) {
-                                Toast.makeText(MainActivity.this,
-                                        "Wrong email or password", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(MainActivity.this, "Login failed: " +
-                                        task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
-        });
-
-        SignUpPage.setOnClickListener(new View.OnClickListener() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent GotoSignUpPage = new Intent(MainActivity.this, Signup.class);
-                startActivity(GotoSignUpPage);
+                attemptLogin();
             }
         });
-        Forgot_Password.setOnClickListener(new View.OnClickListener() {
+
+        signUpLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText ResetPassword = new EditText(v.getContext());
-                AlertDialog.Builder password_reset = new AlertDialog.Builder(v.getContext());
-                password_reset.setTitle("Reset Password");
-                password_reset.setTitle("Enter email to reset password");
-                password_reset.setView(ResetPassword);
-                password_reset.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String NewPassword = ResetPassword.getText().toString();
-                        Auth.sendPasswordResetEmail(NewPassword).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(MainActivity.this, "Reset link has been sent", Toast.LENGTH_SHORT).show();
-                                }else {
-                                    Toast.makeText(MainActivity.this, "Failed to send reset link", Toast.LENGTH_SHORT).show();
-                            }
-                            }
-                        });
-                    }
-                });
-                password_reset.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
-                password_reset.create().show();
+                startActivity(new Intent(MainActivity.this, Signup.class));
+            }
+        });
+
+        forgotPasswordLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPasswordResetDialog();
             }
         });
     }
+
+    private void initializeUI() {
+        emailEditText = findViewById(R.id.loginEmail);
+        passwordEditText = findViewById(R.id.loginPassword);
+        loginButton = findViewById(R.id.login_btn);
+        signUpLink = findViewById(R.id.signup_link);
+        forgotPasswordLink = findViewById(R.id.ForgotPass);
+    }
+
+    private void attemptLogin() {
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            Toast.makeText(MainActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                FirebaseUser user = auth.getCurrentUser();
+                if (user != null && user.isEmailVerified()) {
+                    startActivity(new Intent(MainActivity.this, EmployeeList.class));
+                } else {
+                    Toast.makeText(MainActivity.this, "Verify email first", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                handleSignInFailure(task);
+            }
+        });
+    }
+
+    private void handleSignInFailure(@NonNull Task<AuthResult> task) {
+        Exception exception = task.getException();
+        if (exception instanceof FirebaseAuthInvalidUserException) {
+            Toast.makeText(MainActivity.this, "Email address not found", Toast.LENGTH_SHORT).show();
+        } else if (exception instanceof FirebaseAuthInvalidCredentialsException) {
+            Toast.makeText(MainActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
+        } else {
+            assert exception != null;
+            Toast.makeText(MainActivity.this, "Login failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showPasswordResetDialog() {
+        EditText resetEmailEditText = new EditText(this);
+        AlertDialog.Builder passwordResetDialog = new AlertDialog.Builder(this);
+        passwordResetDialog.setTitle("Reset Password");
+        passwordResetDialog.setMessage("Enter email to reset password");
+        passwordResetDialog.setView(resetEmailEditText);
+
+        passwordResetDialog.setPositiveButton("Yes", (dialog, which) -> {
+            String email = resetEmailEditText.getText().toString();
+            sendPasswordResetEmail(email);
+        });
+
+        passwordResetDialog.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        passwordResetDialog.create().show();
+    }
+
+    private void sendPasswordResetEmail(String email) {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(MainActivity.this, "Reset link has been sent", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Failed to send reset link", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        if (currentUser != null){
-            Intent GotoEmployeeList = new Intent(MainActivity.this, EmployeeList.class);
-            startActivity(GotoEmployeeList);
+        if (currentUser != null) {
+            startActivity(new Intent(MainActivity.this, EmployeeList.class));
         }
     }
 }

@@ -89,6 +89,7 @@ public class EmployeeDisplay extends AppCompatActivity {
             phoneNumber = intent.getStringExtra("phoneNumber");
             basicPay = intent.getStringExtra("basicPay");
 
+
             DisplayEmpName.setText(fullName);
             DisplayEmpRole.setText(department);
             Picasso.get().load(imageUrl).into(DisplayEmpPic);
