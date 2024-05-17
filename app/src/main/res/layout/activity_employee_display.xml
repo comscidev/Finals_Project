@@ -42,7 +42,7 @@
             </com.google.android.material.imageview.ShapeableImageView>
 
             <TextView
-                android:id="@+id/displayName"
+                android:id="@+id/Payslip_Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -65,7 +65,7 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayName"/>
+                app:layout_constraintTop_toBottomOf="@id/Payslip_Name"/>
 
             <Button
                 android:id="@+id/edit_Emp_Info"
@@ -108,7 +108,7 @@
                 app:layout_constraintTop_toBottomOf="@id/linedivider"/>
 
             <TextView
-                android:id="@+id/displayStatus"
+                android:id="@+id/display_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -132,10 +132,10 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:drawableStart="@drawable/baseline_email_24"
-                app:layout_constraintTop_toBottomOf="@id/displayStatus"/>
+                app:layout_constraintTop_toBottomOf="@id/display_status"/>
 
             <TextView
-                android:id="@+id/displayEmail"
+                android:id="@+id/display_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -159,10 +159,10 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:drawableStart="@drawable/round_phone_24"
-                app:layout_constraintTop_toBottomOf="@id/displayEmail"/>
+                app:layout_constraintTop_toBottomOf="@id/display_email"/>
 
             <TextView
-                android:id="@+id/displayPhone"
+                android:id="@+id/display_earnings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -175,7 +175,7 @@
                 app:layout_constraintTop_toBottomOf="@id/titlePhone"/>
 
             <Button
-                android:id="@+id/btnCreatePayroll"
+                android:id="@+id/pay_btn"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_marginBottom="5dp"
@@ -186,13 +186,13 @@
                 android:textSize="16sp"
                 android:backgroundTint="@color/transparent"
                 app:cornerRadius="15dp"
-                app:layout_constraintBottom_toTopOf="@id/Update_btn"
+                app:layout_constraintBottom_toTopOf="@id/delete_btnn"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:strokeWidth="1dp" />
 
             <Button
-                android:id="@+id/Update_btn"
+                android:id="@+id/delete_btnn"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_marginTop="5dp"

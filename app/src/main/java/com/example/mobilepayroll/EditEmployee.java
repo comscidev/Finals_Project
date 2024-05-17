@@ -38,13 +38,13 @@ public class EditEmployee extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_employee);
 
-        Display_Name = findViewById(R.id.displayName);
-        Display_Email = findViewById(R.id.displayEmail);
-        Display_Phone = findViewById(R.id.displayPhone);
+        Display_Name = findViewById(R.id.Payslip_Name);
+        Display_Email = findViewById(R.id.display_email);
+        Display_Phone = findViewById(R.id.display_earnings);
         Display_Role = findViewById(R.id.displayRole);
         Display_Image = findViewById(R.id.displayphoto);
-        Display_Status = findViewById(R.id.displayStatus);
-        btnSave = findViewById(R.id.Update_btn);
+        Display_Status = findViewById(R.id.display_status);
+        btnSave = findViewById(R.id.delete_btnn);
 
         storageReference = FirebaseStorage.getInstance().getReference();
 
@@ -89,7 +89,7 @@ public class EditEmployee extends AppCompatActivity {
     private void updateEmployeeDocument(String updatedName, String updatedDepartment, String updatedStatus,
                                         String updatedEmail, String updatedPhone, String updatedImage) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference employeeRef = db.collection("employees").document(fullName); // Update with actual document ID
+        DocumentReference employeeRef = db.collection("employees").document(fullName);
         employeeRef.update("fullName", updatedName,
                         "department", updatedDepartment,
                         "status", updatedStatus, "email", updatedEmail, "phoneNumber", updatedPhone, "imageUrl", updatedImage)
@@ -97,12 +97,16 @@ public class EditEmployee extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Toast.makeText(EditEmployee.this, "Employee details updated successfully", Toast.LENGTH_SHORT).show();
-                        fullName = updatedName;
-                        department = updatedDepartment;
-                        status = updatedStatus;
-                        email = updatedEmail;
-                        phoneNumber = updatedPhone;
-                        imageUrl = updatedImage;
+
+                        Intent intent = new Intent(EditEmployee.this, EmployeeDisplay.class);
+                        intent.putExtra("fullName", updatedName);
+                        intent.putExtra("email", updatedEmail);
+                        intent.putExtra("department", updatedDepartment);
+                        intent.putExtra("status", updatedStatus);
+                        intent.putExtra("phoneNumber", updatedPhone);
+                        intent.putExtra("imageUrl", imageUrl);
+                        setResult(RESULT_OK, intent);
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -132,7 +136,6 @@ public class EditEmployee extends AppCompatActivity {
             }
         }
     }
-
     private void uploadImage(String email) {
         if (imageUri != null) {
             StorageReference ref = storageReference.child("employees/" + email + "/" + System.currentTimeMillis() + ".jpg");
@@ -148,16 +151,7 @@ public class EditEmployee extends AppCompatActivity {
                                     String updatedEmail = Display_Email.getText().toString();
                                     String updatedPhone = Display_Phone.getText().toString();
                                     updateEmployeeDocument(updatedName, updatedDepartment, updatedStatus, updatedEmail, updatedPhone, imageUrl);
-                                    // Navigate to another page after the update button is clicked
-                                    Intent intent = new Intent(EditEmployee.this, EmployeeDisplay.class);
-                                    intent.putExtra("fullName", updatedName);
-                                    intent.putExtra("email", updatedEmail);
-                                    intent.putExtra("department", updatedDepartment);
-                                    intent.putExtra("status", updatedStatus);
-                                    intent.putExtra("phoneNumber", updatedPhone);
-                                    intent.putExtra("imageUrl", imageUrl);
-                                    setResult(RESULT_OK, intent);
-                                    finish();
+
                                 } else {
                                     Toast.makeText(EditEmployee.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
                                 }
