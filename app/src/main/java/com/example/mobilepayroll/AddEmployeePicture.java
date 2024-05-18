@@ -19,6 +19,9 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class AddEmployeePicture extends AppCompatActivity {
+
+    private static final int GALLERY_REQUEST_CODE = 1000;
+
     private ImageView employeeProfPic;
     private StorageReference storageReference;
     private Uri imageUri;
@@ -27,65 +30,93 @@ public class AddEmployeePicture extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee_picture);
+
+        initializeViews();
+        setUpUploadClickListener();
+        setUpDoneClickListener();
+        setUpBackClickListener();
+    }
+
+    private void initializeViews() {
         TextView backToEmployeeList = findViewById(R.id.textBack);
         TextView uploadEmpPic = findViewById(R.id.Upload_emp_pic);
         Button doneUploadPic = findViewById(R.id.ButtonToEmpList);
         employeeProfPic = findViewById(R.id.EmployeePicture);
         storageReference = FirebaseStorage.getInstance().getReference();
-
-        uploadEmpPic.setOnClickListener(v -> {
-            Intent openGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(openGallery, 1000);
-        });
-
-        doneUploadPic.setOnClickListener(v -> {
-            if (imageUri != null) {
-                String documentId = getIntent().getStringExtra("Email");
-                if (documentId != null) {
-                    uploadImage(documentId);
-                } else {
-                    Toast.makeText(AddEmployeePicture.this, "Error: Document ID not found", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(AddEmployeePicture.this, "No image selected", Toast.LENGTH_SHORT).show();
-            }
-        });
-        backToEmployeeList.setOnClickListener(v -> {
-            Intent backIntent = new Intent(AddEmployeePicture.this, EmployeeList.class);
-            startActivity(backIntent);
-        });
     }
+
+    private void setUpUploadClickListener() {
+        findViewById(R.id.Upload_emp_pic).setOnClickListener(v -> openGallery());
+    }
+
+    private void openGallery() {
+        Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(openGalleryIntent, GALLERY_REQUEST_CODE);
+    }
+
+    private void setUpDoneClickListener() {
+        findViewById(R.id.ButtonToEmpList).setOnClickListener(v -> handleDoneClick());
+    }
+
+    private void handleDoneClick() {
+        if (imageUri != null) {
+            String documentId = getIntent().getStringExtra("Email");
+            if (documentId != null) {
+                uploadImage(documentId);
+            } else {
+                showToast("Error: Document ID not found");
+            }
+        } else {
+            showToast("No image selected");
+        }
+    }
+
+    private void setUpBackClickListener() {
+        findViewById(R.id.textBack).setOnClickListener(v -> navigateBackToEmployeeList());
+    }
+
+    private void navigateBackToEmployeeList() {
+        Intent backIntent = new Intent(AddEmployeePicture.this, EmployeeList.class);
+        startActivity(backIntent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
             imageUri = data.getData();
             Picasso.get().load(imageUri).into(employeeProfPic);
         }
     }
+
     private void uploadImage(String email) {
         if (imageUri != null) {
             StorageReference ref = storageReference.child("employees/" + email + "/" + System.currentTimeMillis() + ".jpg");
             ref.putFile(imageUri)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(AddEmployeePicture.this, "Image Uploaded", Toast.LENGTH_SHORT).show();
-                            ref.getDownloadUrl().addOnCompleteListener(uriTask -> {
-                                if (uriTask.isSuccessful()) {
-                                    String imageUrl = uriTask.getResult().toString();
-                                    saveEmployeeToFirestore(imageUrl);
-                                } else {
-                                    Toast.makeText(AddEmployeePicture.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            showToast("Image Uploaded");
+                            getDownloadUrl(ref);
                         } else {
-                            Toast.makeText(AddEmployeePicture.this, "Upload Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            showToast("Upload Failed: " + task.getException().getMessage());
                         }
                     });
         } else {
-            Toast.makeText(AddEmployeePicture.this, "No image selected", Toast.LENGTH_SHORT).show();
+            showToast("No image selected");
         }
     }
+
+    private void getDownloadUrl(StorageReference ref) {
+        ref.getDownloadUrl().addOnCompleteListener(uriTask -> {
+            if (uriTask.isSuccessful()) {
+                String imageUrl = uriTask.getResult().toString();
+                saveEmployeeToFirestore(imageUrl);
+            } else {
+                showToast("Failed to get image URL");
+            }
+        });
+    }
+
     private void saveEmployeeToFirestore(String imageUrl) {
         Intent intent = getIntent();
         String fullName = intent.getStringExtra("FullName");
@@ -93,21 +124,29 @@ public class AddEmployeePicture extends AppCompatActivity {
         String phoneNumber = intent.getStringExtra("PhoneNumber");
         String department = intent.getStringExtra("Department");
         String basicPay = intent.getStringExtra("BasicPay");
-        String  status = intent.getStringExtra("Status");
+        String status = intent.getStringExtra("Status");
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl,status);
+        Employee employee = new Employee(fullName, email, phoneNumber, department, basicPay, imageUrl, status);
 
         db.collection("employees").document(fullName)
-                .set(employee).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()){
-                        Toast.makeText(AddEmployeePicture.this, "Employee Added Successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent1 = new Intent(AddEmployeePicture.this, EmployeeList.class);
-                        startActivity(intent1);
-                    }else {
-                        Toast.makeText(AddEmployeePicture.this, "Failed to Add Employee", Toast.LENGTH_SHORT).show();
+                .set(employee)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        showToast("Employee Added Successfully");
+                        navigateToEmployeeList();
+                    } else {
+                        showToast("Failed to Add Employee");
                     }
                 });
     }
-}
 
+    private void navigateToEmployeeList() {
+        Intent GotoEmployeeList = new Intent(AddEmployeePicture.this, EmployeeList.class);
+        startActivity(GotoEmployeeList);
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(AddEmployeePicture.this, message, Toast.LENGTH_SHORT).show();
+    }
+}

@@ -8,78 +8,77 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.View;
+
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class PayrollComputation extends AppCompatActivity {
 
     private Dialog dialog;
     private Button btnDialogNo, btnDialogYes;
 
-    private TextView Emp_Rate, Emp_Name, Emp_Designation, DisplayTotalEarnings, DisplayTotalDeduction,
-            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay, Emp_Email, Emp_Status;
+    private TextView empRate, empName, empDesignation, displayTotalEarnings, displayTotalDeduction,
+            displayNetPay, cancelPayroll, empOvertimeRate, empOverTimePay, empBasicPay, empEmail, empStatus;
 
-    private EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
-            Payroll_Tittle,
-            Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
+    private EditText empTotalDays, empTotalWeeks, empAdditionalPayment, empSpecialAllowance,
+            payrollTitle, empTax, empSSS, empPHealth, empPagIbig, empCashAdvance, empMealAllowance, empShop;
 
-    private Button Savebtn;
-
+    private Button saveBtn;
     private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payroll_computation);
+
+        initViews();
+        setupDialog();
+        populateFieldsFromIntent();
+        setupListeners();
+    }
+
+    private void initViews() {
         db = FirebaseFirestore.getInstance();
-        Emp_Name = findViewById(R.id.Payroll_EmpName);
-        Emp_Designation = findViewById(R.id.Emp_Designation);
-        Emp_Rate = findViewById(R.id.EmployeeRate);
-        Emp_Total_Days = findViewById(R.id.EmployeeTotalDays);
-        Emp_TotalWeeks = findViewById(R.id.EmployeeWeeklyHrs);
-        Emp_BasicPay = findViewById(R.id.EmployeeBasicPay);
-        Emp_OvertimeRate = findViewById(R.id.EmployeeOverTime);
-        Emp_OverTimePay = findViewById(R.id.EmployeeOverTimePay);
-        Emp_Email = findViewById(R.id.EmpEmail);
-        Emp_Status = findViewById(R.id.EmpStatus);
-        Emp_AdditionalPayment = findViewById(R.id.EmployeeAdditionalPay);
-        Emp_SpecialAllowance = findViewById(R.id.EmployeeSpecialAllowance);
-        Payroll_Tittle = findViewById(R.id.Payslip_Title);
-        DisplayTotalEarnings = findViewById(R.id.DisplayTotalEarnings);
-        DisplayTotalDeduction = findViewById(R.id.DisplayTotalDeductions);
-        Emp_Tax = findViewById(R.id.EmployeeTax);
-        Emp_SSS = findViewById(R.id.EmployeeSSS);
-        Emp_PHealth = findViewById(R.id.EmployeePhilHealth);
-        Emp_PagIbig = findViewById(R.id.EmployeePagIbig);
-        Emp_CashAdvance = findViewById(R.id.EmployeeCashAdvance);
-        Emp_MealAllowance = findViewById(R.id.EmployeeMealAllowance);
-        Emp_Shop = findViewById(R.id.EmployeeShop);
-        DisplayNetPay = findViewById(R.id.DisplayNetPay);
-        CancelPayroll = findViewById(R.id.cancel_btn);
-        Savebtn = findViewById(R.id.saveComputationBtn);
-        Payroll_Tittle = findViewById(R.id.Payslip_Title);
+        empName = findViewById(R.id.Payroll_EmpName);
+        empDesignation = findViewById(R.id.Emp_Designation);
+        empRate = findViewById(R.id.EmployeeRate);
+        empTotalDays = findViewById(R.id.EmployeeTotalDays);
+        empTotalWeeks = findViewById(R.id.EmployeeWeeklyHrs);
+        empBasicPay = findViewById(R.id.EmployeeBasicPay);
+        empOvertimeRate = findViewById(R.id.EmployeeOverTime);
+        empOverTimePay = findViewById(R.id.EmployeeOverTimePay);
+        empEmail = findViewById(R.id.EmpEmail);
+        empStatus = findViewById(R.id.EmpStatus);
+        empAdditionalPayment = findViewById(R.id.EmployeeAdditionalPay);
+        empSpecialAllowance = findViewById(R.id.EmployeeSpecialAllowance);
+        payrollTitle = findViewById(R.id.Payslip_Title);
+        displayTotalEarnings = findViewById(R.id.DisplayTotalEarnings);
+        displayTotalDeduction = findViewById(R.id.DisplayTotalDeductions);
+        empTax = findViewById(R.id.EmployeeTax);
+        empSSS = findViewById(R.id.EmployeeSSS);
+        empPHealth = findViewById(R.id.EmployeePhilHealth);
+        empPagIbig = findViewById(R.id.EmployeePagIbig);
+        empCashAdvance = findViewById(R.id.EmployeeCashAdvance);
+        empMealAllowance = findViewById(R.id.EmployeeMealAllowance);
+        empShop = findViewById(R.id.EmployeeShop);
+        displayNetPay = findViewById(R.id.DisplayNetPay);
+        cancelPayroll = findViewById(R.id.cancel_btn);
+        saveBtn = findViewById(R.id.saveComputationBtn);
+    }
 
-
+    private void setupDialog() {
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.cancel_dialog);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -88,7 +87,9 @@ public class PayrollComputation extends AppCompatActivity {
 
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+    }
 
+    private void populateFieldsFromIntent() {
         Intent intent = getIntent();
         if (intent != null) {
             String fullName = intent.getStringExtra("fullName");
@@ -96,52 +97,29 @@ public class PayrollComputation extends AppCompatActivity {
             String basicPay = intent.getStringExtra("basicPay");
             String email = intent.getStringExtra("email");
             String status = intent.getStringExtra("status");
-            Emp_Status.setText(status);
-            Emp_Name.setText(fullName);
-            Emp_Designation.setText(department);
-            Emp_Rate.setText(basicPay);
-            Emp_Email.setText(email);
+
+            empStatus.setText(status);
+            empName.setText(fullName);
+            empDesignation.setText(department);
+            empRate.setText(basicPay);
+            empEmail.setText(email);
         }
+    }
 
-        Savebtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    private void setupListeners() {
+        saveBtn.setOnClickListener(v -> savePayrollData());
 
-                savePayrollData();
-            }
+        btnDialogNo.setOnClickListener(v -> dialog.dismiss());
+
+        btnDialogYes.setOnClickListener(v -> {
+            Intent cancelPayrollIntent = new Intent(PayrollComputation.this, EmployeeList.class);
+            startActivity(cancelPayrollIntent);
+            dialog.dismiss();
         });
 
+        cancelPayroll.setOnClickListener(v -> dialog.show());
 
-        btnDialogNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        btnDialogYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent CancelPayroll = new Intent(PayrollComputation.this, EmployeeList.class);
-                startActivity(CancelPayroll);
-                dialog.dismiss();
-            }
-        });
-
-        CancelPayroll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.show();
-            }
-        });
-
-
-        Emp_Name.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
+        empName.addTextChangedListener(new TextWatcherAdapter() {
             @Override
             public void afterTextChanged(Editable s) {
                 String fullName = s.toString().trim();
@@ -149,154 +127,141 @@ public class PayrollComputation extends AppCompatActivity {
             }
         });
 
-        Emp_Rate.addTextChangedListener(textWatcher);
-        Emp_Total_Days.addTextChangedListener(textWatcher);
-        Emp_TotalWeeks.addTextChangedListener(textWatcher);
-        Emp_AdditionalPayment.addTextChangedListener(textWatcher);
-        Emp_SpecialAllowance.addTextChangedListener(textWatcher);
+        TextWatcher earningsWatcher = new TextWatcherAdapter() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                calculateTotalEarnings();
+            }
+        };
 
-        Emp_Tax.addTextChangedListener(deductionWatcher);
-        Emp_SSS.addTextChangedListener(deductionWatcher);
-        Emp_PHealth.addTextChangedListener(deductionWatcher);
-        Emp_PagIbig.addTextChangedListener(deductionWatcher);
-        Emp_CashAdvance.addTextChangedListener(deductionWatcher);
-        Emp_MealAllowance.addTextChangedListener(deductionWatcher);
-        Emp_Shop.addTextChangedListener(deductionWatcher);
+        empRate.addTextChangedListener(earningsWatcher);
+        empTotalDays.addTextChangedListener(earningsWatcher);
+        empTotalWeeks.addTextChangedListener(earningsWatcher);
+        empAdditionalPayment.addTextChangedListener(earningsWatcher);
+        empSpecialAllowance.addTextChangedListener(earningsWatcher);
 
-        DisplayTotalEarnings.addTextChangedListener(netPayWatcher);
-        DisplayTotalDeduction.addTextChangedListener(netPayWatcher);
+        TextWatcher deductionWatcher = new TextWatcherAdapter() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                calculateTotalDeduction();
+            }
+        };
+
+        empTax.addTextChangedListener(deductionWatcher);
+        empSSS.addTextChangedListener(deductionWatcher);
+        empPHealth.addTextChangedListener(deductionWatcher);
+        empPagIbig.addTextChangedListener(deductionWatcher);
+        empCashAdvance.addTextChangedListener(deductionWatcher);
+        empMealAllowance.addTextChangedListener(deductionWatcher);
+        empShop.addTextChangedListener(deductionWatcher);
+
+        TextWatcher netPayWatcher = new TextWatcherAdapter() {
+            @Override
+            public void afterTextChanged(Editable s) {
+                calculateTotalNetPay();
+            }
+        };
+
+        displayTotalEarnings.addTextChangedListener(netPayWatcher);
+        displayTotalDeduction.addTextChangedListener(netPayWatcher);
     }
-
 
     private void loadUserData(String fullName) {
         CollectionReference employeesRef = db.collection("employees");
         Query query = employeesRef.whereEqualTo("fullName", fullName).limit(1);
 
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (DocumentSnapshot document : task.getResult()) {
-                        // Process the document data here
-                        String basicPay = document.getString("basicPay");
-                        Emp_Rate.setText(basicPay);
-                        String designation = document.getString("department");
-                        Emp_Designation.setText(designation);
-                        String email = document.getString("email");
-                        Emp_Email.setText(email);
-                        String status = document.getString("status");
-                        Emp_Name.setText(fullName);
-                        Emp_Status.setText(status);
-                    }
-                } else {
-                    Log.e("Firestore", "Error getting documents: ", task.getException());
+        query.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    String basicPay = document.getString("basicPay");
+                    empRate.setText(basicPay);
+                    String designation = document.getString("department");
+                    empDesignation.setText(designation);
+                    String email = document.getString("email");
+                    empEmail.setText(email);
+                    String status = document.getString("status");
+                    empStatus.setText(status);
                 }
+            } else {
+                Log.e(TAG, "Error getting documents: ", task.getException());
             }
         });
     }
 
-    TextWatcher netPayWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            calculateTotalNetPay();
-        }
-    };
-    private final TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            calculateTotalEarnings();
-        }
-    };
-
-    private final TextWatcher deductionWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            calculateTotalDeduction();
-        }
-    };
-
     private void calculateTotalEarnings() {
-        double EmpRate = parseDouble(Emp_Rate.getText().toString());
-        double TotalDaysOfWork = parseDouble(Emp_Total_Days.getText().toString());
-        double EmpBasicPay = EmpRate * TotalDaysOfWork;
-        double OvertimeRate = EmpRate / 8 * 1.25;
-        double TotalOverTimePay = parseDouble(Emp_TotalWeeks.getText().toString()) * OvertimeRate;
-        double AdditionalPayment = parseDouble(Emp_AdditionalPayment.getText().toString());
-        double SpecialAllowance = parseDouble(Emp_SpecialAllowance.getText().toString());
-        double TotalEarnings = EmpBasicPay + TotalOverTimePay + SpecialAllowance + AdditionalPayment;
+        double empRateValue = parseDouble(empRate.getText().toString());
+        double totalDaysOfWork = parseDouble(empTotalDays.getText().toString());
+        double empBasicPayValue = empRateValue * totalDaysOfWork;
+        double overtimeRate = empRateValue / 8 * 1.25;
+        double totalOverTimePay = parseDouble(empTotalWeeks.getText().toString()) * overtimeRate;
+        double additionalPayment = parseDouble(empAdditionalPayment.getText().toString());
+        double specialAllowance = parseDouble(empSpecialAllowance.getText().toString());
+        double totalEarnings = empBasicPayValue + totalOverTimePay + specialAllowance + additionalPayment;
 
-        Emp_OvertimeRate.setText(String.valueOf(OvertimeRate));
-        Emp_OverTimePay.setText(String.valueOf(TotalOverTimePay));
-        Emp_BasicPay.setText(String.valueOf(EmpBasicPay));
-        DisplayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
+        empOvertimeRate.setText(String.valueOf(overtimeRate));
+        empOverTimePay.setText(String.valueOf(totalOverTimePay));
+        empBasicPay.setText(String.valueOf(empBasicPayValue));
+        displayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", totalEarnings));
     }
 
     private void calculateTotalDeduction() {
-        double Emptax = parseDouble(Emp_Tax.getText().toString());
-        double EmpSSS = parseDouble(Emp_SSS.getText().toString());
-        double EMpPhealth = parseDouble(Emp_PHealth.getText().toString());
-        double EMpPagIbig = parseDouble(Emp_PagIbig.getText().toString());
-        double EMpCashAdvance = parseDouble(Emp_CashAdvance.getText().toString());
-        double EmpMealAllowance = parseDouble(Emp_MealAllowance.getText().toString());
-        double EmpShop = parseDouble(Emp_Shop.getText().toString());
-        double TotalDeduction = Emptax + EmpSSS + EMpPhealth + EMpPagIbig + EMpCashAdvance + EmpMealAllowance + EmpShop;
+        double empTaxValue = parseDouble(empTax.getText().toString());
+        double empSSSValue = parseDouble(empSSS.getText().toString());
+        double empPHealthValue = parseDouble(empPHealth.getText().toString());
+        double empPagIbigValue = parseDouble(empPagIbig.getText().toString());
+        double empCashAdvanceValue = parseDouble(empCashAdvance.getText().toString());
+        double empMealAllowanceValue = parseDouble(empMealAllowance.getText().toString());
+        double empShopValue = parseDouble(empShop.getText().toString());
+        double totalDeduction = empTaxValue + empSSSValue + empPHealthValue + empPagIbigValue +
+                empCashAdvanceValue + empMealAllowanceValue + empShopValue;
 
-        DisplayTotalDeduction.setText(String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
+        displayTotalDeduction.setText(String.format(Locale.getDefault(), "₱%.2f", totalDeduction));
         calculateTotalNetPay();
     }
 
     private void calculateTotalNetPay() {
-        double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
-        double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
-        double NetPay = TotalEarnings - TotalDeduction;
+        double totalEarnings = parseDouble(displayTotalEarnings.getText().toString().replace("₱", ""));
+        double totalDeduction = parseDouble(displayTotalDeduction.getText().toString().replace("₱", ""));
+        double netPay = totalEarnings - totalDeduction;
 
-        DisplayNetPay.setText(String.format(Locale.getDefault(), "₱%.2f", NetPay));
+        displayNetPay.setText(String.format(Locale.getDefault(), "₱%.2f", netPay));
     }
 
     private void savePayrollData() {
-        String FullName = Emp_Name.getText().toString().trim();
-        String Department = Emp_Designation.getText().toString();
-        String PayrollTitle = Payroll_Tittle.getText().toString();
-        String Email = Emp_Email.getText().toString();
-        String Status = Emp_Status.getText().toString();
-        double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
-        double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
-        double NetPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
+        String fullName = empName.getText().toString().trim();
+        String department = empDesignation.getText().toString();
+        String payrollTitleValue = payrollTitle.getText().toString();
+        String email = empEmail.getText().toString();
+        String status = empStatus.getText().toString();
+        double totalEarnings = parseDouble(displayTotalEarnings.getText().toString().replace("₱", ""));
+        double totalDeduction = parseDouble(displayTotalDeduction.getText().toString().replace("₱", ""));
+        double netPay = parseDouble(displayNetPay.getText().toString().replace("₱", ""));
 
-        Intent payrollData = new Intent(PayrollComputation.this, Payslip.class);
-        payrollData.putExtra("FullName", FullName);
-        payrollData.putExtra("Department", Department);
-        payrollData.putExtra("Email", Email);
-        payrollData.putExtra("Status", Status);
-        payrollData.putExtra("PayrollTitle", PayrollTitle);
-        payrollData.putExtra("TotalEarnings", String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
-        payrollData.putExtra("TotalDeduction", String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
-        payrollData.putExtra("NetPay", String.format(Locale.getDefault(), "₱%.2f", NetPay));
-        startActivity(payrollData);
+        Intent payrollDataIntent = new Intent(PayrollComputation.this, Payslip.class);
+        payrollDataIntent.putExtra("FullName", fullName);
+        payrollDataIntent.putExtra("Department", department);
+        payrollDataIntent.putExtra("Email", email);
+        payrollDataIntent.putExtra("Status", status);
+        payrollDataIntent.putExtra("PayrollTitle", payrollTitleValue);
+        payrollDataIntent.putExtra("TotalEarnings", String.format(Locale.getDefault(), "₱%.2f", totalEarnings));
+        payrollDataIntent.putExtra("TotalDeduction", String.format(Locale.getDefault(), "₱%.2f", totalDeduction));
+        payrollDataIntent.putExtra("NetPay", String.format(Locale.getDefault(), "₱%.2f", netPay));
+        startActivity(payrollDataIntent);
     }
+
     private double parseDouble(String value) {
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             return 0.0;
         }
+    }
+
+    private abstract class TextWatcherAdapter implements TextWatcher {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
     }
 }

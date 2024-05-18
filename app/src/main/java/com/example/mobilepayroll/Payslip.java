@@ -30,9 +30,12 @@ public class Payslip extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_payslip);
 
-        // Initialize Firestore
+        initializeViews();
         db = FirebaseFirestore.getInstance();
+        setIntentData();
+    }
 
+    private void initializeViews() {
         nameTextView = findViewById(R.id.payslip_name);
         designationTextView = findViewById(R.id.payslip_dept);
         displayStatus = findViewById(R.id.display_status);
@@ -44,7 +47,9 @@ public class Payslip extends AppCompatActivity {
 
         payButton = findViewById(R.id.pay_btn);
         deleteButton = findViewById(R.id.delete_btnn);
+    }
 
+    private void setIntentData() {
         Intent intent = getIntent();
         if (intent != null) {
             String name = intent.getStringExtra("FullName");
@@ -65,36 +70,29 @@ public class Payslip extends AppCompatActivity {
             displayDeductions.setText(deductions);
             displayNet.setText(netPay);
 
-            payButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    saveToFirestoreAndSendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay);
-                }
-            });
+            payButton.setOnClickListener(v -> saveToFirestoreAndSendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay));
         }
     }
 
     private void saveToFirestoreAndSendEmail(String email, String payrollTitle, String name, String designation, String earnings, String deductions, String netPay) {
-        // Save to Firestore
+        Map<String, Object> payslipData = createPayslipData(name, designation, email, earnings, deductions, netPay);
+
+        DocumentReference payrollRef = db.collection("payroll").document(name).collection("payrollTitles").document(payrollTitle);
+        payrollRef.set(payslipData)
+                .addOnSuccessListener(documentReference -> sendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay))
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to save payslip data", Toast.LENGTH_SHORT).show());
+    }
+
+    private Map<String, Object> createPayslipData(String name, String designation, String email, String earnings, String deductions, String netPay) {
         Map<String, Object> payslipData = new HashMap<>();
         payslipData.put("FullName", name);
         payslipData.put("Department", designation);
         payslipData.put("Email", email);
-        payslipData.put("Status", displayStatus.getText().toString()); // Assuming displayStatus is a TextView
-        payslipData.put("PayrollTitle", payrollTitle);
+        payslipData.put("Status", displayStatus.getText().toString());
         payslipData.put("TotalEarnings", earnings);
         payslipData.put("TotalDeduction", deductions);
         payslipData.put("NetPay", netPay);
-
-        DocumentReference payrollRef = db.collection("payroll").document(name).collection("payrollTitles").document(payrollTitle);
-        payrollRef.set(payslipData).addOnSuccessListener(documentReference -> {
-                    // Document saved successfully, now send the email
-                    sendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay);
-                })
-                .addOnFailureListener(e -> {
-                    // Handle failure to save to Firestore
-                    Toast.makeText(this, "Failed to save payslip data", Toast.LENGTH_SHORT).show();
-                });
+        return payslipData;
     }
 
     private void sendEmail(String email, String payrollTitle, String name, String designation, String earnings, String deductions, String netPay) {

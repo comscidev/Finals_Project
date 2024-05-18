@@ -25,96 +25,99 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class EditEmployee extends AppCompatActivity {
-    private TextView Display_Name;
-    private EditText Display_Email, Display_Phone, Display_Role, Display_Status;
-    private ImageView Display_Image;
-    private String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
+    private TextView displayName;
+    private EditText displayEmail, displayPhone, displayRole, displayStatus;
+    private ImageView displayImage;
     private Button btnSave;
     private StorageReference storageReference;
     private Uri imageUri;
+    private String fullName, department, email, imageUrl, phoneNumber, status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_employee);
 
-        Display_Name = findViewById(R.id.Payslip_Name);
-        Display_Email = findViewById(R.id.display_email);
-        Display_Phone = findViewById(R.id.display_earnings);
-        Display_Role = findViewById(R.id.displayRole);
-        Display_Image = findViewById(R.id.displayphoto);
-        Display_Status = findViewById(R.id.display_status);
-        btnSave = findViewById(R.id.delete_btnn);
-
+        initializeViews();
         storageReference = FirebaseStorage.getInstance().getReference();
 
-        Intent getdata = getIntent();
-        if (getdata != null) {
-            fullName = getdata.getStringExtra("fullName");
-            email = getdata.getStringExtra("email");
-            phoneNumber = getdata.getStringExtra("phoneNumber");
-            department = getdata.getStringExtra("department");
-            imageUrl = getdata.getStringExtra("imageUrl");
-            status = getdata.getStringExtra("status");
-
-            Display_Name.setText(fullName);
-            Display_Role.setText(department);
-            Display_Status.setText(status);
-            Display_Email.setText(email);
-            Display_Phone.setText(phoneNumber);
-            Picasso.get().load(imageUrl).into(Display_Image);
+        Intent getData = getIntent();
+        if (getData != null) {
+            populateEmployeeData(getData);
         }
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String updatedName = Display_Name.getText().toString();
-                String updatedDepartment = Display_Role.getText().toString();
-                String updatedStatus = Display_Status.getText().toString();
-                String updatedEmail = Display_Email.getText().toString();
-                String updatedPhone = Display_Phone.getText().toString();
-                updateEmployeeDocument(updatedName, updatedDepartment, updatedStatus, updatedEmail, updatedPhone, imageUrl);
-            }
-        });
+        btnSave.setOnClickListener(v -> saveEmployeeDetails());
+        displayImage.setOnClickListener(v -> openGallery());
+    }
 
-        Display_Image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent openGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(openGallery, 1000);
-            }
-        });
+    private void initializeViews() {
+        displayName = findViewById(R.id.Payslip_Name);
+        displayEmail = findViewById(R.id.display_email);
+        displayPhone = findViewById(R.id.display_earnings);
+        displayRole = findViewById(R.id.displayRole);
+        displayImage = findViewById(R.id.displayphoto);
+        displayStatus = findViewById(R.id.display_status);
+        btnSave = findViewById(R.id.delete_btnn);
+    }
+
+    private void populateEmployeeData(Intent getData) {
+        fullName = getData.getStringExtra("fullName");
+        email = getData.getStringExtra("email");
+        phoneNumber = getData.getStringExtra("phoneNumber");
+        department = getData.getStringExtra("department");
+        imageUrl = getData.getStringExtra("imageUrl");
+        status = getData.getStringExtra("status");
+
+        displayName.setText(fullName);
+        displayRole.setText(department);
+        displayStatus.setText(status);
+        displayEmail.setText(email);
+        displayPhone.setText(phoneNumber);
+        Picasso.get().load(imageUrl).into(displayImage);
+    }
+
+    private void saveEmployeeDetails() {
+        String updatedName = displayName.getText().toString();
+        String updatedDepartment = displayRole.getText().toString();
+        String updatedStatus = displayStatus.getText().toString();
+        String updatedEmail = displayEmail.getText().toString();
+        String updatedPhone = displayPhone.getText().toString();
+
+        updateEmployeeDocument(updatedName, updatedDepartment, updatedStatus, updatedEmail, updatedPhone, imageUrl);
+    }
+
+    private void openGallery() {
+        Intent openGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(openGallery, 1000);
     }
 
     private void updateEmployeeDocument(String updatedName, String updatedDepartment, String updatedStatus,
                                         String updatedEmail, String updatedPhone, String updatedImage) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference employeeRef = db.collection("employees").document(fullName);
-        employeeRef.update("fullName", updatedName,
-                        "department", updatedDepartment,
-                        "status", updatedStatus, "email", updatedEmail, "phoneNumber", updatedPhone, "imageUrl", updatedImage)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(EditEmployee.this, "Employee details updated successfully", Toast.LENGTH_SHORT).show();
+        employeeRef.update("fullName", updatedName, "department", updatedDepartment, "status", updatedStatus,
+                        "email", updatedEmail, "phoneNumber", updatedPhone, "imageUrl", updatedImage)
+                .addOnSuccessListener(aVoid -> onEmployeeUpdateSuccess(updatedName, updatedEmail, updatedDepartment, updatedStatus, updatedPhone))
+                .addOnFailureListener(e -> onEmployeeUpdateFailure(e));
+    }
 
-                        Intent intent = new Intent(EditEmployee.this, EmployeeDisplay.class);
-                        intent.putExtra("fullName", updatedName);
-                        intent.putExtra("email", updatedEmail);
-                        intent.putExtra("department", updatedDepartment);
-                        intent.putExtra("status", updatedStatus);
-                        intent.putExtra("phoneNumber", updatedPhone);
-                        intent.putExtra("imageUrl", imageUrl);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(EditEmployee.this, "Failed to update employee details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void onEmployeeUpdateSuccess(String updatedName, String updatedEmail, String updatedDepartment,
+                                         String updatedStatus, String updatedPhone) {
+        Toast.makeText(EditEmployee.this, "Employee details updated successfully", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(EditEmployee.this, EmployeeDisplay.class);
+        intent.putExtra("fullName", updatedName);
+        intent.putExtra("email", updatedEmail);
+        intent.putExtra("department", updatedDepartment);
+        intent.putExtra("status", updatedStatus);
+        intent.putExtra("phoneNumber", updatedPhone);
+        intent.putExtra("imageUrl", imageUrl);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
+
+    private void onEmployeeUpdateFailure(Exception e) {
+        Toast.makeText(EditEmployee.this, "Failed to update employee details: " + e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -122,21 +125,12 @@ public class EditEmployee extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
             imageUri = data.getData();
-            Picasso.get().load(imageUri).into(Display_Image);
-
-            if (imageUri != null) {
-                String documentId = getIntent().getStringExtra("email");
-                if (documentId != null) {
-                    uploadImage(documentId);
-                } else {
-                    Toast.makeText(EditEmployee.this, "Error: Document ID not found", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(EditEmployee.this, "No image selected", Toast.LENGTH_SHORT).show();
-            }
+            Picasso.get().load(imageUri).into(displayImage);
+            uploadImage();
         }
     }
-    private void uploadImage(String email) {
+
+    private void uploadImage() {
         if (imageUri != null) {
             StorageReference ref = storageReference.child("employees/" + email + "/" + System.currentTimeMillis() + ".jpg");
             ref.putFile(imageUri)
@@ -145,24 +139,21 @@ public class EditEmployee extends AppCompatActivity {
                             ref.getDownloadUrl().addOnCompleteListener(uriTask -> {
                                 if (uriTask.isSuccessful()) {
                                     imageUrl = uriTask.getResult().toString();
-                                    String updatedName = Display_Name.getText().toString();
-                                    String updatedDepartment = Display_Role.getText().toString();
-                                    String updatedStatus = Display_Status.getText().toString();
-                                    String updatedEmail = Display_Email.getText().toString();
-                                    String updatedPhone = Display_Phone.getText().toString();
-                                    updateEmployeeDocument(updatedName, updatedDepartment, updatedStatus, updatedEmail, updatedPhone, imageUrl);
-
+                                    saveEmployeeDetails();
                                 } else {
-                                    Toast.makeText(EditEmployee.this, "Failed to get image URL", Toast.LENGTH_SHORT).show();
+                                    showToast("Failed to get image URL");
                                 }
                             });
                         } else {
-                            Toast.makeText(EditEmployee.this, "Upload Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            showToast("Upload Failed: " + task.getException().getMessage());
                         }
                     });
         } else {
-            Toast.makeText(EditEmployee.this, "No image selected", Toast.LENGTH_SHORT).show();
+            showToast("No image selected");
         }
     }
 
+    private void showToast(String message) {
+        Toast.makeText(EditEmployee.this, message, Toast.LENGTH_SHORT).show();
+    }
 }
