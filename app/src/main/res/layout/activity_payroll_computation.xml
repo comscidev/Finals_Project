@@ -82,10 +82,23 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
                     android:backgroundTint="@android:color/transparent"
-                    android:hint="Full Name"
+                    android:hint="full name"
                     android:inputType="text"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/EmpEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@android:color/transparent"
+                    android:hint="email@gmail.com"
+                    android:inputType="text"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="match_parent"
@@ -105,7 +118,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginStart="5dp"
                         android:padding="5dp"
-                        android:text="Designation"
+                        android:text="Department"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
@@ -114,7 +127,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginEnd="5dp"
-                        android:hint="designation"
+                        android:hint="department"
                         android:padding="5dp"
                         android:textAlignment="viewEnd"
                         android:textColor="@color/black"
@@ -122,30 +135,32 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/EmpEmail"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:hint="Email Address"
-                    android:inputType="textEmailAddress"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="5dp"
+                        android:padding="5dp"
+                        android:text="Employement Status"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
 
-                <TextView
-                    android:id="@+id/EmpStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:backgroundTint="@android:color/transparent"
-                    android:hint="Status"
-                    android:inputType="textEmailAddress"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
+                    <TextView
+                        android:id="@+id/EmpStatus"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:hint="@string/hint_status"
+                        android:padding="5dp"
+                        android:textAlignment="viewEnd"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                </LinearLayout>
             </LinearLayout>
 
 
@@ -281,8 +296,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginStart="5dp"
                         android:padding="5dp"
-                        android:text="Overtime Rate
-"
+                        android:text="Overtime Hours"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
 
