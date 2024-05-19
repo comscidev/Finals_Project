@@ -19,7 +19,8 @@
         tools:targetApi="34" >
         <activity
             android:name=".Payslips"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
         <activity
             android:name=".PayslipDisplay"
             android:exported="false" />
