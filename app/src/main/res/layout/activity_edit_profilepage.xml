@@ -17,41 +17,40 @@
         android:layout_marginTop="35dp">
 
         <TextView
-            android:id="@+id/titleEditProfile"
+            android:id="@+id/edit_profile_back_btn"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
+            android:ems="10"
             android:text=" Edit profile"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="25sp"
-            android:ems="10"
+            android:textStyle="bold"
             app:drawableStartCompat="@drawable/baseline_keyboard_arrow_left_24"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profile_image"
-            android:layout_width="120sp"
-            android:layout_height="120sp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_marginTop="10dp"
             android:src="@drawable/userprofile"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleEditProfile"
-            app:shapeAppearanceOverlay="@style/roundImageView">
-        </com.google.android.material.imageview.ShapeableImageView>
+            app:layout_constraintTop_toBottomOf="@id/edit_profile_back_btn"
+            app:shapeAppearanceOverlay="@style/roundImageView"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingCameraIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:backgroundTint="@color/transparent"
+            android:backgroundTint="@android:color/transparent"
             android:outlineProvider="none"
             app:maxImageSize="30dp"
-            app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-            app:layout_constraintEnd_toEndOf="@+id/profile_image"
+            app:layout_constraintBottom_toBottomOf="@id/profile_image"
+            app:layout_constraintEnd_toEndOf="@id/profile_image"
             app:srcCompat="@drawable/baseline_photo_camera_24" />
 
         <EditText
@@ -108,7 +107,7 @@
                     android:layout_weight="1"
                     android:backgroundTint="@android:color/transparent"
                     android:hint="email@gmail.com"
-                    android:inputType="text"
+                    android:inputType="textEmailAddress"
                     android:textAlignment="viewEnd"
                     android:textColor="@color/black"
                     android:textSize="18sp"

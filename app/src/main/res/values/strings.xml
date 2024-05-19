@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">MobilePayroll</string>
     <string name="select">Status</string>
+    <string name="hint_name">Wes Fesley</string>
+    <string name="hint_email">email@gmail.com</string>
+    <string name="hint_phone">09xx-xxx-xxxx</string>
+    <string name="hint_department">department</string>
+    <string name="hint_status">status</string>
+
 </resources>

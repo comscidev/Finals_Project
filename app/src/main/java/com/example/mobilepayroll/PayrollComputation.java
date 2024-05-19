@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,36 +18,34 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class PayrollComputation extends AppCompatActivity {
 
-    Dialog dialog;
-    Button btnDialogNo, btnDialogYes;
+    private Dialog dialog;
+    private Button btnDialogNo, btnDialogYes;
 
-    TextView Emp_Rate, Emp_Name, Emp_Designation, Emp_TotalEarnings, DisplayTotalEarnings, DisplayTotalDeduction,
-            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay;
+    private TextView Emp_Rate, Emp_Name, Emp_Designation, DisplayTotalEarnings, DisplayTotalDeduction,
+            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay, Emp_Email, Emp_Status;
 
-    EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
+    private EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
             Payroll_Tittle,
             Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
 
-    Button Savebtn;
+    private Button Savebtn;
 
-    FirebaseFirestore db;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payroll_computation);
-
+        db = FirebaseFirestore.getInstance();
         Emp_Name = findViewById(R.id.Payroll_EmpName);
         Emp_Designation = findViewById(R.id.Emp_Designation);
         Emp_Rate = findViewById(R.id.EmployeeRate);
@@ -57,9 +54,11 @@ public class PayrollComputation extends AppCompatActivity {
         Emp_BasicPay = findViewById(R.id.EmployeeBasicPay);
         Emp_OvertimeRate = findViewById(R.id.EmployeeOverTime);
         Emp_OverTimePay = findViewById(R.id.EmployeeOverTimePay);
+        Emp_Email = findViewById(R.id.EmpEmail);
+        Emp_Status = findViewById(R.id.EmpStatus);
         Emp_AdditionalPayment = findViewById(R.id.EmployeeAdditionalPay);
         Emp_SpecialAllowance = findViewById(R.id.EmployeeSpecialAllowance);
-        Emp_TotalEarnings = findViewById(R.id.Total_Earnings);
+        Payroll_Tittle = findViewById(R.id.Payslip_Title);
         DisplayTotalEarnings = findViewById(R.id.DisplayTotalEarnings);
         DisplayTotalDeduction = findViewById(R.id.DisplayTotalDeductions);
         Emp_Tax = findViewById(R.id.EmployeeTax);
@@ -89,17 +88,20 @@ public class PayrollComputation extends AppCompatActivity {
             String fullName = intent.getStringExtra("fullName");
             String department = intent.getStringExtra("department");
             String basicPay = intent.getStringExtra("basicPay");
+            String email = intent.getStringExtra("email");
+            String status = intent.getStringExtra("status");
+            Emp_Status.setText(status);
             Emp_Name.setText(fullName);
             Emp_Designation.setText(department);
             Emp_Rate.setText(basicPay);
+            Emp_Email.setText(email);
         }
 
         Savebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    savePayrollData();
-                    Intent GotoPayrollAgain = new Intent(PayrollComputation.this, PayrollComputation.class);
-                    startActivity(GotoPayrollAgain);
+
+                savePayrollData();
             }
         });
 
@@ -126,7 +128,6 @@ public class PayrollComputation extends AppCompatActivity {
             }
         });
 
-        db = FirebaseFirestore.getInstance();
 
         Emp_Name.addTextChangedListener(new TextWatcher() {
             @Override
@@ -155,32 +156,51 @@ public class PayrollComputation extends AppCompatActivity {
         Emp_CashAdvance.addTextChangedListener(deductionWatcher);
         Emp_MealAllowance.addTextChangedListener(deductionWatcher);
         Emp_Shop.addTextChangedListener(deductionWatcher);
+
+        DisplayTotalEarnings.addTextChangedListener(netPayWatcher);
+        DisplayTotalDeduction.addTextChangedListener(netPayWatcher);
     }
+
 
     private void loadUserData(String fullName) {
         CollectionReference employeesRef = db.collection("employees");
-        Query query = employeesRef.whereEqualTo("fullName", fullName);
+        Query query = employeesRef.whereEqualTo("fullName", fullName).limit(1);
 
-        query.get().addOnSuccessListener(queryDocumentSnapshots -> {
-            if (!queryDocumentSnapshots.isEmpty()) {
-                DocumentSnapshot documentSnapshot = queryDocumentSnapshots.getDocuments().get(0);
-                String basicPay = documentSnapshot.getString("basicPay");
-                Emp_Rate.setText(basicPay);
-                String designation = documentSnapshot.getString("department");
-                Emp_Designation.setText(designation);
-                Emp_Name.setText(fullName);
-            } else {
-                Emp_Rate.setText("");
-                Emp_Designation.setText("");
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        // Process the document data here
+                        String basicPay = document.getString("basicPay");
+                        Emp_Rate.setText(basicPay);
+                        String designation = document.getString("department");
+                        Emp_Designation.setText(designation);
+                        String email = document.getString("email");
+                        Emp_Email.setText(email);
+                        String status = document.getString("status");
+                        Emp_Name.setText(fullName);
+                        Emp_Status.setText(status);
+                    }
+                } else {
+                    Log.e("Firestore", "Error getting documents: ", task.getException());
+                }
             }
-        }).addOnFailureListener(e -> {
-            Emp_Rate.setText("");
-            Emp_Designation.setText("");
-            Emp_Name.setText(""); // Clear the name field if data retrieval fails
-            Log.e("Firestore", "Error retrieving user data", e);
         });
     }
 
+    TextWatcher netPayWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            calculateTotalNetPay();
+        }
+    };
     private final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -223,7 +243,6 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayTotalEarnings.setText(String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
     }
 
-
     private void calculateTotalDeduction() {
         double Emptax = parseDouble(Emp_Tax.getText().toString());
         double EmpSSS = parseDouble(Emp_SSS.getText().toString());
@@ -232,7 +251,7 @@ public class PayrollComputation extends AppCompatActivity {
         double EMpCashAdvance = parseDouble(Emp_CashAdvance.getText().toString());
         double EmpMealAllowance = parseDouble(Emp_MealAllowance.getText().toString());
         double EmpShop = parseDouble(Emp_Shop.getText().toString());
-        double TotalDeduction = Emptax + EmpSSS+ EMpPhealth + EMpPagIbig + EMpCashAdvance + EmpMealAllowance + EmpShop;
+        double TotalDeduction = Emptax + EmpSSS + EMpPhealth + EMpPagIbig + EMpCashAdvance + EmpMealAllowance + EmpShop;
 
         DisplayTotalDeduction.setText(String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
         calculateTotalNetPay();
@@ -247,35 +266,26 @@ public class PayrollComputation extends AppCompatActivity {
     }
 
     private void savePayrollData() {
-        String fullName = Emp_Name.getText().toString().trim();
-        String designation = Emp_Designation.getText().toString();
-        String payrollTitle = Payroll_Tittle.getText().toString();
-        double rate = parseDouble(Emp_Rate.getText().toString());
-        double totalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
-        double totalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
-        double netPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
+        String FullName = Emp_Name.getText().toString().trim();
+        String Department = Emp_Designation.getText().toString();
+        String PayrollTitle = Payroll_Tittle.getText().toString();
+        String Email = Emp_Email.getText().toString();
+        String Status = Emp_Status.getText().toString();
+        double TotalEarnings = parseDouble(DisplayTotalEarnings.getText().toString().replace("₱", ""));
+        double TotalDeduction = parseDouble(DisplayTotalDeduction.getText().toString().replace("₱", ""));
+        double NetPay = parseDouble(DisplayNetPay.getText().toString().replace("₱", ""));
 
-        Map<String, Object> payrollData = new HashMap<>();
-        payrollData.put("fullName", fullName);
-        payrollData.put("designation", designation);
-        payrollData.put("rate", rate);
-        payrollData.put("totalEarnings", totalEarnings);
-        payrollData.put("totalDeduction", totalDeduction);
-        payrollData.put("netPay", netPay);
-
-        DocumentReference payrollRef = db.collection("payroll").document(fullName).collection("payrollTitles").document(payrollTitle);
-        payrollRef.set(payrollData).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(PayrollComputation.this, "Payslip stored in Database", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PayrollComputation.this, "Failed to update Database", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        Intent payrollData = new Intent(PayrollComputation.this, PayslipDisplay.class);
+        payrollData.putExtra("FullName", FullName);
+        payrollData.putExtra("Department", Department);
+        payrollData.putExtra("Email", Email);
+        payrollData.putExtra("Status", Status);
+        payrollData.putExtra("PayrollTitle", PayrollTitle);
+        payrollData.putExtra("TotalEarnings", String.format(Locale.getDefault(), "₱%.2f", TotalEarnings));
+        payrollData.putExtra("TotalDeduction", String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
+        payrollData.putExtra("NetPay", String.format(Locale.getDefault(), "₱%.2f", NetPay));
+        startActivity(payrollData);
     }
-
     private double parseDouble(String value) {
         try {
             return Double.parseDouble(value);

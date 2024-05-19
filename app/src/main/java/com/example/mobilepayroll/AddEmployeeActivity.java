@@ -1,14 +1,17 @@
 package com.example.mobilepayroll;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,9 +24,12 @@ import java.util.Map;
 
 public class AddEmployeeActivity extends AppCompatActivity {
 
-    String[] items = {"Regular", "Probationary", "Part-time"};
-    AutoCompleteTextView autoCompleteTxt;
-    ArrayAdapter<String> adapterItems;
+   private String[] items = {"Regular", "Probationary", "Part-time"};
+   private AutoCompleteTextView autoCompleteTxt;
+   private ArrayAdapter<String> adapterItems;
+
+    private Dialog dialog;
+    private Button btnDialogNo, btnDialogYes;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +41,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
         EditText empDepartment = findViewById(R.id.add_designation);
         EditText empBasicPay = findViewById(R.id.add_basicpay);
         Button button = findViewById(R.id.next_btn);
+        TextView BackButton = findViewById(R.id.titleAddEmployee);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,6 +78,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         autoCompleteTxt = findViewById(R.id.auto_complete_txt);
         adapterItems = new ArrayAdapter<>(this, R.layout.list_status, items);
         autoCompleteTxt.setAdapter(adapterItems);
@@ -79,7 +87,44 @@ public class AddEmployeeActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             }
         });
+
+        BackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDialog();
+            }
+        });
     }
+    private void ShowDialog() {
+
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent BackToEmployeeListPageFunction = new Intent(AddEmployeeActivity.this, EmployeeList.class);
+                startActivity(BackToEmployeeListPageFunction);
+                dialog.dismiss();
+            }
+        });
+
+
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
     public boolean isValidPhoneNumber(String phoneNumber) {
         return phoneNumber.matches("^[0-9()-]+$");
     }

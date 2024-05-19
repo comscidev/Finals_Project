@@ -1,10 +1,12 @@
 package com.example.mobilepayroll;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,15 +21,15 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class AddEmployeePicture extends AppCompatActivity {
-    ImageView employeeProfPic;
-    StorageReference storageReference;
-    Uri imageUri;
+    private ImageView employeeProfPic;
+    private StorageReference storageReference;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_employee_picture);
-        TextView backToEmployeeList = findViewById(R.id.textBack);
+        TextView backToAddEmployeeList = findViewById(R.id.titleEmployeePicture);
         TextView uploadEmpPic = findViewById(R.id.Upload_emp_pic);
         Button doneUploadPic = findViewById(R.id.ButtonToEmpList);
         employeeProfPic = findViewById(R.id.EmployeePicture);
@@ -50,8 +52,8 @@ public class AddEmployeePicture extends AppCompatActivity {
                 Toast.makeText(AddEmployeePicture.this, "No image selected", Toast.LENGTH_SHORT).show();
             }
         });
-        backToEmployeeList.setOnClickListener(v -> {
-            Intent backIntent = new Intent(AddEmployeePicture.this, EmployeeList.class);
+        backToAddEmployeeList.setOnClickListener(v -> {
+            Intent backIntent = new Intent(AddEmployeePicture.this, AddEmployeeActivity.class);
             startActivity(backIntent);
         });
     }

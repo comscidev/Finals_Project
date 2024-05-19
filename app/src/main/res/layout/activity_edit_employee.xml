@@ -8,12 +8,6 @@
     android:orientation="vertical"
     tools:context=".EmployeeDisplay">
 
-    <LinearLayout
-        android:id="@+id/linearInfo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/empdetails"
             android:layout_width="match_parent"
@@ -23,7 +17,7 @@
             android:layout_marginEnd="24dp">
 
             <TextView
-                android:id="@+id/titleEmpInfo"
+                android:id="@+id/titleEditEmpInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -41,24 +35,24 @@
                 android:layout_height="120dp"
                 android:layout_marginTop="30dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo"
+                app:layout_constraintTop_toBottomOf="@id/titleEditEmpInfo"
                 app:shapeAppearanceOverlay="@style/roundImageView"
                 app:srcCompat="@drawable/emprofile_icon">
 
             </com.google.android.material.imageview.ShapeableImageView>
 
             <TextView
-                android:id="@+id/displayName"
+                android:id="@+id/Payslip_Name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="35dp"
-                android:text="Wes Fesley"
+                android:hint="@string/hint_name"
                 android:textColor="@color/black"
                 android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/titleEmpInfo" />
+                app:layout_constraintTop_toBottomOf="@id/titleEditEmpInfo" />
 
             <EditText
                 android:id="@+id/displayRole"
@@ -66,13 +60,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="5dp"
-                android:hint="Support"
+                android:hint="@string/hint_department"
+                android:inputType="text"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:backgroundTint="@android:color/transparent"
                 app:layout_constraintStart_toEndOf="@id/displayphoto"
-                app:layout_constraintTop_toBottomOf="@id/displayName" />
+                app:layout_constraintTop_toBottomOf="@id/Payslip_Name" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/linedivider"
@@ -91,21 +86,23 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginEnd="10dp"
-                android:drawableStart="@drawable/round_person_pin_24"
                 android:text="  Employement Status"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
+                app:drawableStartCompat="@drawable/round_person_pin_24"
                 app:layout_constraintTop_toBottomOf="@id/linedivider" />
 
             <EditText
-                android:id="@+id/displayStatus"
+                android:id="@+id/display_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="Regular"
+                android:hint="@string/hint_status"
+                android:autofillHints=""
+                android:inputType="text"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -123,17 +120,19 @@
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:drawableStart="@drawable/baseline_email_24"
-                app:layout_constraintTop_toBottomOf="@id/displayStatus"/>
+                app:drawableStartCompat="@drawable/baseline_email_24"
+                app:layout_constraintTop_toBottomOf="@id/display_status"/>
 
             <EditText
-                android:id="@+id/displayEmail"
+                android:id="@+id/display_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="email@gmail.com"
+                android:hint="@string/hint_email"
+                android:autofillHints="email"
+                android:inputType="textEmailAddress"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -151,17 +150,18 @@
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:drawableStart="@drawable/round_phone_24"
-                app:layout_constraintTop_toBottomOf="@id/displayEmail" />
+                app:drawableStartCompat="@drawable/round_phone_24"
+                app:layout_constraintTop_toBottomOf="@id/display_email" />
 
             <EditText
-                android:id="@+id/displayPhone"
+                android:id="@+id/display_phone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="09xx-xxx-xxxx"
+                android:hint="@string/hint_phone"
+                android:inputType="phone"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -169,20 +169,18 @@
                 app:layout_constraintTop_toBottomOf="@id/titlePhone"/>
 
             <Button
-                android:id="@+id/Update_btn"
+                android:id="@+id/btnUpdateChanges"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="30dp"
                 android:backgroundTint="@color/darkblue"
                 android:gravity="center"
-                android:text="Update Changes"
                 android:letterSpacing="0.2"
+                android:text="Update Changes"
                 android:textSize="18sp"
                 app:cornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </LinearLayout>
 </LinearLayout>

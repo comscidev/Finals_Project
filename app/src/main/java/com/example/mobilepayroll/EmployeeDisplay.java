@@ -23,12 +23,12 @@ import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 public class EmployeeDisplay extends AppCompatActivity {
-    private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1; // Request code for editing
+    private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1;
 
-    FirebaseFirestore db;
-    String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
-    ImageView DisplayEmpPic;
-    TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
+   private FirebaseFirestore db;
+    private String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
+    private ImageView DisplayEmpPic;
+    private TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
 
     Dialog dialog;
     Button btnDialogNo, btnDialogYes;
@@ -41,15 +41,15 @@ public class EmployeeDisplay extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         DisplayEmpPic = findViewById(R.id.displayphoto);
-        DisplayEmpName = findViewById(R.id.displayName);
+        DisplayEmpName = findViewById(R.id.Payslip_Name);
         DisplayEmpRole = findViewById(R.id.displayRole);
-        DisplayEMpStatus = findViewById(R.id.displayStatus);
-        DisplayEmpEmail = findViewById(R.id.displayEmail);
-        DisplayPhoneNum = findViewById(R.id.displayPhone);
+        DisplayEMpStatus = findViewById(R.id.display_status);
+        DisplayEmpEmail = findViewById(R.id.display_email);
+        DisplayPhoneNum = findViewById(R.id.display_earnings);
 
         Button EditEmp_Btn = findViewById(R.id.edit_Emp_Info);
-        Button PayrollBtn = findViewById(R.id.btnCreatePayroll);
-        Button DeleteEmpBtn = findViewById(R.id.Update_btn);
+        Button PayrollBtn = findViewById(R.id.pay_btn);
+        Button DeleteEmpBtn = findViewById(R.id.delete_btnn);
 
         EditEmp_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +130,8 @@ public class EmployeeDisplay extends AppCompatActivity {
         goToPayroll.putExtra("fullName", fullName);
         goToPayroll.putExtra("department", department);
         goToPayroll.putExtra("basicPay", basicPay);
+        goToPayroll.putExtra("email", email);
+        goToPayroll.putExtra("status", status);
         startActivity(goToPayroll);
     }
 

@@ -1,3 +1,4 @@
+
 package com.example.mobilepayroll;
 
 import android.app.Activity;
@@ -41,20 +42,15 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 public class Edit_Profilepage extends AppCompatActivity {
-    FirebaseAuth Auth;
-    FirebaseFirestore db;
-
-    String userID;
-    ImageView admin_profile_image;
-    DocumentSnapshot documentSnapshot;
-
-    StorageReference storageReference;
-
-    Dialog dialog;
-    Button btnDialogNo, btnDialogYes;
-    Button deleteUserButton; // Add reference to delete button
-
-    FloatingActionButton cameraIcon;
+    private FirebaseAuth Auth;
+    private FirebaseFirestore db;
+    private String userID;
+    private ImageView admin_profile_image;
+    private DocumentSnapshot documentSnapshot;
+    private StorageReference storageReference;
+    private Dialog dialog;
+    private Button btnDialogNo, btnDialogYes;
+    private Button deleteUserButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +64,9 @@ public class Edit_Profilepage extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         userID = Auth.getCurrentUser().getUid();
         admin_profile_image = findViewById(R.id.profile_image);
-        cameraIcon = findViewById(R.id.floatingCameraIcon);
+        ImageButton add_profile_image = findViewById(R.id.floatingCameraIcon);
         Button SaveEditButton = findViewById(R.id.save_btn);
-        TextView BackButton = findViewById(R.id.titleEditProfile);
+        TextView BackButton = findViewById(R.id.edit_profile_back_btn);
 
         deleteUserButton = findViewById(R.id.delete_btn);
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -179,11 +175,12 @@ public class Edit_Profilepage extends AppCompatActivity {
             }
         });
 
-        cameraIcon.setOnClickListener(new View.OnClickListener() {
+        add_profile_image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent OpenGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(OpenGallery, 1000);
+
             }
         });
 
@@ -328,4 +325,3 @@ public class Edit_Profilepage extends AppCompatActivity {
     }
 
 }
-

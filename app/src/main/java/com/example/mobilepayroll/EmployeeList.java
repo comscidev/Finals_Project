@@ -1,54 +1,43 @@
 package com.example.mobilepayroll;
 
-import static android.content.ContentValues.TAG;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.MenuItem;
-import android.view.TextureView;
+
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
+
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.namespace.QName;
 
 public class EmployeeList extends AppCompatActivity {
 
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
 
-    TextView textAdmin, textAll;
-    UserAdapter userAdapter ;
-    BottomNavigationView bottomNavigationView;
+   private TextView textAdmin, textAll, textProduction, textSupport, textLogistics;
+   private UserAdapter userAdapter ;
+    private BottomNavigationView bottomNavigationView;
+    private
     FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +82,29 @@ public class EmployeeList extends AppCompatActivity {
             }
         });
 
+        textProduction = findViewById(R.id.textProduction);
+        textProduction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Production");
+            }
+        });
 
+        textSupport = findViewById(R.id.textSupport);
+        textSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Support");
+            }
+        });
+
+        textLogistics = findViewById(R.id.textLogistics);
+        textLogistics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recyclerViewByDepartment("Logistics");
+            }
+        });
 
         DocumentReference documentReference = db.collection("users").document(userID);
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
@@ -101,7 +112,7 @@ public class EmployeeList extends AppCompatActivity {
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot,
                                 @Nullable FirebaseFirestoreException error) {
                 if (documentSnapshot != null) {
-                    Display_FullName.setText(documentSnapshot.getString("fullname"));
+                    Display_FullName.setText(documentSnapshot.getString("fullName"));
 
                     bottomNavigationView = findViewById(R.id.bottomNavigationView);
                     bottomNavigationView.setSelectedItemId(R.id.bottom_employees);

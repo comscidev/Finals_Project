@@ -29,8 +29,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 
 public class Profilepage_function extends AppCompatActivity {
 
-    Dialog dialog;
-    Button btnDialogCancel, btnDialogLogout;
+    private Dialog dialog;
+    private Button btnDialogCancel, btnDialogLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class Profilepage_function extends AppCompatActivity {
                                 @Nullable FirebaseFirestoreException error) {
 
                 if (documentSnapshot != null && documentSnapshot.exists()) {
-                    displayName.setText(documentSnapshot.getString("fullname"));
+                    displayName.setText(documentSnapshot.getString("fullName"));
                     displayPosition.setText(documentSnapshot.getString("position"));
                     displayEmail.setText(documentSnapshot.getString("email"));
 
