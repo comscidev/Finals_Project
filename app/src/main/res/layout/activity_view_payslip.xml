@@ -20,7 +20,7 @@
             android:id="@+id/titlePayslipDisplay"
             android:layout_width="210dp"
             android:layout_height="wrap_content"
-            android:text="View Payslip"
+            android:text="Payslip Display"
             android:textColor="@color/black"
             android:textSize="26sp"
             android:textStyle="bold"
@@ -30,7 +30,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
-            android:id="@+id/linearLayout2"
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -69,58 +69,28 @@
                 android:id="@+id/payslip_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:hint="email@gmail.com"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/payslip_dept"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="employee department"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Department"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/payslip_dept"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/hint_department"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/payslip_status"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="Employement Status"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-                <TextView
-                    android:id="@+id/display_status"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_status"
-                    android:textAlignment="viewEnd"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="status"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="320dp"
@@ -144,7 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:hint="₱ 0.00"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -163,7 +133,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:hint="₱ 0.00"
                 android:textColor="@color/black"
                 android:textSize="18sp" />
@@ -190,7 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
                 android:hint="₱ 0.00"
                 android:textColor="@color/black"
@@ -199,20 +169,19 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/sendEmail_btn"
+            android:id="@+id/payslip_delete"
             android:layout_width="0dp"
             android:layout_height="60dp"
-            android:backgroundTint="@color/brand_color"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/lightred"
             android:gravity="center"
-            android:letterSpacing="0.1"
-            android:text="Send via email"
-            android:textColor="@color/black"
-            android:textSize="16sp"
+            android:letterSpacing="0.2"
+            android:text="Delete Payslip"
+            android:textSize="18sp"
             app:cornerRadius="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"/>
-
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

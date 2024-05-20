@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Intent GotoEmployeeList = new Intent(MainActivity.this, EmployeeList.class);
                 startActivity(GotoEmployeeList);
+                finish();
             }
         }
     }

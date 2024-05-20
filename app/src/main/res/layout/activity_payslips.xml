@@ -32,26 +32,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <SearchView
-            android:id="@+id/searchbar2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:iconifiedByDefault="false"
-            android:searchHintIcon="@null"
-            android:queryHint="Search..."
-            android:focusable="false"
-            android:searchIcon="@drawable/baseline_search_24"
-            android:closeIcon="@drawable/baseline_clear_24"
-            android:background="@drawable/custom_outline"
-            app:layout_constraintTop_toBottomOf="@id/titlePayslips"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewId2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:layout_below="@id/constraintLayout"
         android:layout_above="@id/bottomNavigationView"/>
 

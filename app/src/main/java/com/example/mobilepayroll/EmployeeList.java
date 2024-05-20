@@ -131,6 +131,10 @@ public class EmployeeList extends AppCompatActivity {
                                     startActivity(new Intent(getApplicationContext(), PayrollComputation.class));
                                     overridePendingTransition(0,0);
                                     return true;
+                                case R.id.bottom_payslip:
+                                    startActivity(new Intent(getApplicationContext(), Payslips.class));
+                                    overridePendingTransition(0,0);
+                                    return true;
                             }
                             return false;
                         }

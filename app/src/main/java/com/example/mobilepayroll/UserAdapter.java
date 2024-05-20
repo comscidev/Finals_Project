@@ -60,7 +60,7 @@ public class UserAdapter extends FirestoreRecyclerAdapter<UserModel, UserAdapter
             super(itemView);
             View view = itemView;
 
-            fullName = view.findViewById(R.id.textViewName);
+            fullName = view.findViewById(R.id.view_name2_1);
             department = view.findViewById(R.id.textJobRole);
             employee_pic = view.findViewById(R.id.emp_pic);
             cardView = view.findViewById(R.id.Card_View);

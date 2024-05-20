@@ -43,13 +43,15 @@ public class EmployeeDisplay extends AppCompatActivity {
         DisplayEmpPic = findViewById(R.id.displayphoto);
         DisplayEmpName = findViewById(R.id.Payslip_Name);
         DisplayEmpRole = findViewById(R.id.displayRole);
-        DisplayEMpStatus = findViewById(R.id.display_status);
-        DisplayEmpEmail = findViewById(R.id.display_email);
-        DisplayPhoneNum = findViewById(R.id.display_earnings);
+        DisplayEMpStatus = findViewById(R.id.payslip_status);
+        DisplayEmpEmail = findViewById(R.id.payslip_email);
+        DisplayPhoneNum = findViewById(R.id.payslip_earnings);
 
         Button EditEmp_Btn = findViewById(R.id.edit_Emp_Info);
         Button PayrollBtn = findViewById(R.id.pay_btn);
         Button DeleteEmpBtn = findViewById(R.id.delete_btnn);
+
+        TextView BackToEmployeeList = findViewById(R.id.titleEmpInfo);
 
         EditEmp_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +78,14 @@ public class EmployeeDisplay extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ShowDeleteDialog();
+            }
+        });
+
+        BackToEmployeeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoEmployeeList = new Intent(EmployeeDisplay.this, EmployeeList.class);
+                startActivity(gotoEmployeeList);
             }
         });
 

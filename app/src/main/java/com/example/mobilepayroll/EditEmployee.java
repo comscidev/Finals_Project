@@ -44,11 +44,11 @@ public class EditEmployee extends AppCompatActivity {
         setContentView(R.layout.activity_edit_employee);
 
         Display_Name = findViewById(R.id.Payslip_Name);
-        Display_Email = findViewById(R.id.display_email);
+        Display_Email = findViewById(R.id.payslip_email);
         Display_Phone = findViewById(R.id.display_phone);
         Display_Role = findViewById(R.id.displayRole);
         Display_Image = findViewById(R.id.displayphoto);
-        Display_Status = findViewById(R.id.display_status);
+        Display_Status = findViewById(R.id.payslip_status);
         btnSave = findViewById(R.id.btnUpdateChanges);
         TextView BackButton = findViewById(R.id.titleEditEmpInfo);
 

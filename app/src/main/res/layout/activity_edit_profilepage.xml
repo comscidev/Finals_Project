@@ -203,7 +203,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/delete_btn"
+            android:id="@+id/payslip_delete"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_marginBottom="5dp"

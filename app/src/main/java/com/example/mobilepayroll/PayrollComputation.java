@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class PayrollComputation extends AppCompatActivity {
@@ -31,10 +33,10 @@ public class PayrollComputation extends AppCompatActivity {
     private Button btnDialogNo, btnDialogYes;
 
     private TextView Emp_Rate, Emp_Name, Emp_Designation, DisplayTotalEarnings, DisplayTotalDeduction,
-            DisplayNetPay, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay, Emp_Email, Emp_Status;
+            DisplayNetPay, Payroll_Tittle, CancelPayroll, Emp_OvertimeRate, Emp_OverTimePay, Emp_BasicPay, Emp_Email, Emp_Status;
 
     private EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
-            Payroll_Tittle,
+
             Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
 
     private Button Savebtn;
@@ -71,8 +73,6 @@ public class PayrollComputation extends AppCompatActivity {
         DisplayNetPay = findViewById(R.id.DisplayNetPay);
         CancelPayroll = findViewById(R.id.cancel_btn);
         Savebtn = findViewById(R.id.saveComputationBtn);
-        Payroll_Tittle = findViewById(R.id.Payslip_Title);
-
 
         dialog = new Dialog(this);
         dialog.setContentView(R.layout.cancel_dialog);
@@ -82,6 +82,11 @@ public class PayrollComputation extends AppCompatActivity {
 
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+        Payroll_Tittle.setText("Payslip date for - " + currentDate);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -285,6 +290,7 @@ public class PayrollComputation extends AppCompatActivity {
         payrollData.putExtra("TotalDeduction", String.format(Locale.getDefault(), "₱%.2f", TotalDeduction));
         payrollData.putExtra("NetPay", String.format(Locale.getDefault(), "₱%.2f", NetPay));
         startActivity(payrollData);
+        finish();
     }
     private double parseDouble(String value) {
         try {

@@ -35,15 +35,15 @@ public class PayslipDisplay extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.payslip_name);
         designationTextView = findViewById(R.id.payslip_dept);
-        displayStatus = findViewById(R.id.display_status);
-        displayEmail = findViewById(R.id.display_email);
-        displayEarnings = findViewById(R.id.display_earnings);
-        displayDeductions = findViewById(R.id.display_deduction);
-        displayNet = findViewById(R.id.display_net);
+        displayStatus = findViewById(R.id.payslip_status);
+        displayEmail = findViewById(R.id.payslip_email);
+        displayEarnings = findViewById(R.id.payslip_earnings);
+        displayDeductions = findViewById(R.id.payslip_deduction);
+        displayNet = findViewById(R.id.payslip_netpay);
         payslipTitle = findViewById(R.id.payslip_title);
 
         sendEmailButton = findViewById(R.id.sendEmail_btn);
-        deleteButton = findViewById(R.id.delete_btn);
+        deleteButton = findViewById(R.id.payslip_delete);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -86,7 +86,7 @@ public class PayslipDisplay extends AppCompatActivity {
         payslipData.put("TotalDeduction", deductions);
         payslipData.put("NetPay", netPay);
 
-        DocumentReference payrollRef = db.collection("payroll").document(name).collection("payrollTitles").document(payrollTitle);
+       DocumentReference payrollRef = db.collection("payroll").document(name);
         payrollRef.set(payslipData).addOnSuccessListener(documentReference -> {
                     // Document saved successfully, now send the email
                     sendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay);
