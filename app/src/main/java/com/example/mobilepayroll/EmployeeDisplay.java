@@ -25,35 +25,71 @@ import com.squareup.picasso.Picasso;
 public class EmployeeDisplay extends AppCompatActivity {
     private static final int EDIT_EMPLOYEE_REQUEST_CODE = 1;
 
-    private FirebaseFirestore db;
+   private FirebaseFirestore db;
     private String fullName, department, email, imageUrl, phoneNumber, status, basicPay;
-    private ImageView displayEmpPic;
-    private TextView displayEmpName, displayEmpRole, displayEmpStatus, displayEmpEmail, displayPhoneNum;
-    private Dialog dialog;
+    private ImageView DisplayEmpPic;
+    private TextView DisplayEmpName, DisplayEmpRole, DisplayEMpStatus, DisplayEmpEmail, DisplayPhoneNum;
+
+    Dialog dialog;
+    Button btnDialogNo, btnDialogYes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_employee_display);
-
         db = FirebaseFirestore.getInstance();
-        initializeViews();
 
-        handleIntent(getIntent());
-        setButtonListeners();
-    }
+        DisplayEmpPic = findViewById(R.id.displayphoto);
+        DisplayEmpName = findViewById(R.id.Payslip_Name);
+        DisplayEmpRole = findViewById(R.id.displayRole);
+        DisplayEMpStatus = findViewById(R.id.payslip_status);
+        DisplayEmpEmail = findViewById(R.id.payslip_email);
+        DisplayPhoneNum = findViewById(R.id.payslip_earnings);
 
-    private void initializeViews() {
-        displayEmpPic = findViewById(R.id.displayphoto);
-        displayEmpName = findViewById(R.id.Payslip_Name);
-        displayEmpRole = findViewById(R.id.displayRole);
-        displayEmpStatus = findViewById(R.id.display_status);
-        displayEmpEmail = findViewById(R.id.display_email);
-        displayPhoneNum = findViewById(R.id.display_earnings);
-    }
+        Button EditEmp_Btn = findViewById(R.id.edit_Emp_Info);
+        Button PayrollBtn = findViewById(R.id.pay_btn);
+        Button DeleteEmpBtn = findViewById(R.id.delete_btnn);
 
-    private void handleIntent(Intent intent) {
+        TextView BackToEmployeeList = findViewById(R.id.titleEmpInfo);
+
+        EditEmp_Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goToEditEmployee = new Intent(EmployeeDisplay.this, EditEmployee.class);
+                goToEditEmployee.putExtra("fullName", fullName);
+                goToEditEmployee.putExtra("department", department);
+                goToEditEmployee.putExtra("imageUrl", imageUrl);
+                goToEditEmployee.putExtra("status", status);
+                goToEditEmployee.putExtra("email", email);
+                goToEditEmployee.putExtra("phoneNumber", phoneNumber);
+                startActivityForResult(goToEditEmployee, EDIT_EMPLOYEE_REQUEST_CODE);
+            }
+        });
+
+        PayrollBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GotoPayrollPage();
+            }
+        });
+
+        DeleteEmpBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDeleteDialog();
+            }
+        });
+
+        BackToEmployeeList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoEmployeeList = new Intent(EmployeeDisplay.this, EmployeeList.class);
+                startActivity(gotoEmployeeList);
+            }
+        });
+
+        Intent intent = getIntent();
         if (intent != null) {
             fullName = intent.getStringExtra("fullName");
             department = intent.getStringExtra("department");
@@ -63,41 +99,43 @@ public class EmployeeDisplay extends AppCompatActivity {
             phoneNumber = intent.getStringExtra("phoneNumber");
             basicPay = intent.getStringExtra("basicPay");
 
-            displayEmployeeDetails();
+            DisplayEmpName.setText(fullName);
+            DisplayEmpRole.setText(department);
+            Picasso.get().load(imageUrl).into(DisplayEmpPic);
+            DisplayEMpStatus.setText(status);
+            DisplayEmpEmail.setText(email);
+            DisplayPhoneNum.setText(phoneNumber);
         }
     }
 
-    private void displayEmployeeDetails() {
-        displayEmpName.setText(fullName);
-        displayEmpRole.setText(department);
-        Picasso.get().load(imageUrl).into(displayEmpPic);
-        displayEmpStatus.setText(status);
-        displayEmpEmail.setText(email);
-        displayPhoneNum.setText(phoneNumber);
+    private void ShowDeleteDialog() {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.delete_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEmployee();
+                dialog.dismiss();
+            }
+        });
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
-    private void setButtonListeners() {
-        Button editEmpBtn = findViewById(R.id.edit_Emp_Info);
-        Button payrollBtn = findViewById(R.id.pay_btn);
-        Button deleteEmpBtn = findViewById(R.id.delete_btnn);
-
-        editEmpBtn.setOnClickListener(v -> navigateToEditEmployee());
-        payrollBtn.setOnClickListener(v -> navigateToPayrollPage());
-        deleteEmpBtn.setOnClickListener(v -> showDeleteDialog());
-    }
-
-    private void navigateToEditEmployee() {
-        Intent goToEditEmployee = new Intent(EmployeeDisplay.this, EditEmployee.class);
-        goToEditEmployee.putExtra("fullName", fullName);
-        goToEditEmployee.putExtra("department", department);
-        goToEditEmployee.putExtra("imageUrl", imageUrl);
-        goToEditEmployee.putExtra("status", status);
-        goToEditEmployee.putExtra("email", email);
-        goToEditEmployee.putExtra("phoneNumber", phoneNumber);
-        startActivityForResult(goToEditEmployee, EDIT_EMPLOYEE_REQUEST_CODE);
-    }
-
-    private void navigateToPayrollPage() {
+    private void GotoPayrollPage() {
         Intent goToPayroll = new Intent(EmployeeDisplay.this, PayrollComputation.class);
         goToPayroll.putExtra("fullName", fullName);
         goToPayroll.putExtra("department", department);
@@ -107,75 +145,52 @@ public class EmployeeDisplay extends AppCompatActivity {
         startActivity(goToPayroll);
     }
 
-    private void showDeleteDialog() {
-        dialog = new Dialog(this);
-        dialog.setContentView(R.layout.delete_dialog);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
-        dialog.setCancelable(false);
-
-        Button btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
-        Button btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
-
-        btnDialogYes.setOnClickListener(v -> {
-            deleteEmployee();
-            dialog.dismiss();
-        });
-
-        btnDialogNo.setOnClickListener(v -> dialog.dismiss());
-
-        dialog.show();
-    }
-
     private void deleteEmployee() {
         db.collection("employees").document(fullName)
                 .delete()
-                .addOnCompleteListener(this::handleEmployeeDeletion);
-    }
-
-    private void handleEmployeeDeletion(Task<Void> task) {
-        if (task.isSuccessful()) {
-            deleteEmployeeImage();
-        } else {
-            Toast.makeText(EmployeeDisplay.this, "Failed to delete employee", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void deleteEmployeeImage() {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
-        storageRef.delete()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(EmployeeDisplay.this, "Employee Deleted!", Toast.LENGTH_SHORT).show();
-                        navigateToEmployeeList();
-                    } else {
-                        Toast.makeText(EmployeeDisplay.this, "Failed to delete image", Toast.LENGTH_SHORT).show();
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl);
+                            storageRef.delete()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(EmployeeDisplay.this, "Employee Deleted!", Toast.LENGTH_SHORT).show();
+                                                Intent GotoEmployelist = new Intent(EmployeeDisplay.this, EmployeeList.class);
+                                                startActivity(GotoEmployelist);
+                                                finish();
+                                            } else {
+                                                Toast.makeText(EmployeeDisplay.this, "Failed to delete image", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        } else {
+                            Toast.makeText(EmployeeDisplay.this, "Failed to delete employee", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
-    }
-
-    private void navigateToEmployeeList() {
-        Intent gotoEmployeeList = new Intent(EmployeeDisplay.this, EmployeeList.class);
-        startActivity(gotoEmployeeList);
-        finish();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == EDIT_EMPLOYEE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            handleEditedEmployeeData(data);
+            fullName = data.getStringExtra("fullName");
+            department = data.getStringExtra("department");
+            imageUrl = data.getStringExtra("imageUrl");
+            status = data.getStringExtra("status");
+            email = data.getStringExtra("email");
+            phoneNumber = data.getStringExtra("phoneNumber");
+
+            DisplayEmpName.setText(fullName);
+            DisplayEmpRole.setText(department);
+            Picasso.get().load(imageUrl).into(DisplayEmpPic);
+            DisplayEMpStatus.setText(status);
+            DisplayEmpEmail.setText(email);
+            DisplayPhoneNum.setText(phoneNumber);
         }
-    }
-
-    private void handleEditedEmployeeData(Intent data) {
-        fullName = data.getStringExtra("fullName");
-        department = data.getStringExtra("department");
-        imageUrl = data.getStringExtra("imageUrl");
-        status = data.getStringExtra("status");
-        email = data.getStringExtra("email");
-        phoneNumber = data.getStringExtra("phoneNumber");
-
-        displayEmployeeDetails();
     }
 }

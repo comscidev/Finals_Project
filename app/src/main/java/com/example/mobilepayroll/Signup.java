@@ -26,7 +26,6 @@ import java.util.Map;
 public class Signup extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore firestore;
-    private EditText editTextFullName, editTextEmail, editTextPassword, editTextConfirmPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,63 +34,71 @@ public class Signup extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
-        initializeViews();
-        setupSignUpButton();
-        setupLoginLink();
-    }
 
-    private void initializeViews() {
-        editTextFullName = findViewById(R.id.textName);
-        editTextEmail = findViewById(R.id.textEmail);
-        editTextPassword = findViewById(R.id.textPassword);
-        editTextConfirmPassword = findViewById(R.id.textConfirmPassword);
-    }
-
-    private void setupSignUpButton() {
+        EditText editTextFullName = findViewById(R.id.textName);
+        EditText editTextEmail = findViewById(R.id.textEmail);
+        EditText editTextPassword = findViewById(R.id.textPassword);
+        EditText editTextConfirmPassword = findViewById(R.id.textConfirmPassword);
         Button buttonSignUp = findViewById(R.id.signup_btn);
-        buttonSignUp.setOnClickListener(v -> signUp());
-    }
+        TextView textViewLogin = findViewById(R.id.login_link);
 
-    private void signUp() {
-        String fullName = editTextFullName.getText().toString().trim();
-        String email = editTextEmail.getText().toString().trim();
-        String password = editTextPassword.getText().toString().trim();
-        String confirmPassword = editTextConfirmPassword.getText().toString().trim();
+        buttonSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String fullName = editTextFullName.getText().toString().trim();
+                String email = editTextEmail.getText().toString().trim();
+                String password = editTextPassword.getText().toString().trim();
+                String confirmPassword = editTextConfirmPassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
-            Toast.makeText(Signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (!password.equals(confirmPassword)) {
-            Toast.makeText(Signup.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        sendEmailVerification(email);
-                        saveUserDetailsToFirestore(fullName, email);
-                    } else {
-                        Toast.makeText(Signup.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void sendEmailVerification(String email) {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            user.sendEmailVerification().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Toast.makeText(Signup.this, "Verification email sent to " + email, Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Signup.this, MainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(Signup.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
+                    Toast.makeText(Signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            });
-        }
+
+                if (!password.equals(confirmPassword)) {
+                    Toast.makeText(Signup.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                auth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(Signup.this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    FirebaseUser user = auth.getCurrentUser();
+                                    if (user != null) {
+                                        user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if (task.isSuccessful()) {
+                                                    // Email sent, update UI accordingly
+                                                    saveUserDetailsToFirestore(fullName, email);
+                                                    Toast.makeText(Signup.this, "Verification email sent to " + email, Toast.LENGTH_SHORT).show();
+                                                    startActivity(new Intent(Signup.this, MainActivity.class));
+                                                    finish();
+                                                } else {
+                                                    // Error sending email
+                                                    Toast.makeText(Signup.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    // Registration failed
+                                    Toast.makeText(Signup.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+
+        textViewLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Signup.this, MainActivity.class));
+                finish();
+            }
+        });
     }
 
     private void saveUserDetailsToFirestore(String fullName, String email) {
@@ -105,20 +112,16 @@ public class Signup extends AppCompatActivity {
             user.put("email", email);
 
             documentReference.set(user)
-                    .addOnCompleteListener(task -> {
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(Signup.this, "Failed to save user details to Firestore.", Toast.LENGTH_SHORT).show();
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+
+                            } else {
+                                Toast.makeText(Signup.this, "Failed to save user details to Firestore.", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
         }
     }
-
-    private void setupLoginLink() {
-        TextView textViewLogin = findViewById(R.id.login_link);
-        textViewLogin.setOnClickListener(v -> {
-            startActivity(new Intent(Signup.this, MainActivity.class));
-            finish();
-        });
-    }
 }
-

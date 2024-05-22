@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="35dp"
-                android:text="Wes Fesley"
+                android:text="@string/hint_name"
                 android:textSize="22sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="15dp"
-                android:text="Support"
+                android:text="@string/hint_department"
                 android:textSize="18sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -108,13 +108,13 @@
                 app:layout_constraintTop_toBottomOf="@id/linedivider"/>
 
             <TextView
-                android:id="@+id/display_status"
+                android:id="@+id/payslip_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="Regular"
+                android:hint="@string/hint_status"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -132,16 +132,16 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:drawableStart="@drawable/baseline_email_24"
-                app:layout_constraintTop_toBottomOf="@id/display_status"/>
+                app:layout_constraintTop_toBottomOf="@id/payslip_status"/>
 
             <TextView
-                android:id="@+id/display_email"
+                android:id="@+id/payslip_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="email@gmail.com"
+                android:hint="@string/hint_email"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"
@@ -159,16 +159,16 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:drawableStart="@drawable/round_phone_24"
-                app:layout_constraintTop_toBottomOf="@id/display_email"/>
+                app:layout_constraintTop_toBottomOf="@id/payslip_email"/>
 
             <TextView
-                android:id="@+id/display_earnings"
+                android:id="@+id/payslip_earnings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="09xx-xxx-xxxx"
+                android:hint="@string/hint_phone"
                 android:textSize="17sp"
                 android:textColor="@color/black"
                 android:textStyle="bold"

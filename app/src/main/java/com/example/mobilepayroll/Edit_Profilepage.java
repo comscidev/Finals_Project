@@ -1,3 +1,5 @@
+
+
 package com.example.mobilepayroll;
 
 import android.app.Activity;
@@ -21,8 +23,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,287 +38,307 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 public class Edit_Profilepage extends AppCompatActivity {
-
-    private FirebaseAuth auth;
+    private FirebaseAuth Auth;
     private FirebaseFirestore db;
     private String userID;
-    private ImageView adminProfileImage;
+    private ImageView admin_profile_image;
     private DocumentSnapshot documentSnapshot;
     private StorageReference storageReference;
     private Dialog dialog;
-    private Button btnDialogNo, btnDialogYes, deleteUserButton;
-
-    private EditText profileName, changeAdminEmail, changeAdminPassword, changeProfilePosition;
-    private ImageButton addProfileImage;
-    private Button saveEditButton;
-    private TextView backButton;
+    private Button btnDialogNo, btnDialogYes;
+    private Button deleteUserButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profilepage);
-        initializeViews();
-        setupProfileImage();
-        setupProfileSnapshotListener();
-        setupSaveEditButtonListener();
-        setupBackButtonListener();
-        setupDeleteUserButtonListener();
-        setupAddProfileImageButtonListener();
-    }
-
-    private void initializeViews() {
-        profileName = findViewById(R.id.edit_profile_Name);
-        changeAdminEmail = findViewById(R.id.edit_profile_Email);
-        changeAdminPassword = findViewById(R.id.edit_profile_Password);
-        changeProfilePosition = findViewById(R.id.edit_profile_Job);
-        auth = FirebaseAuth.getInstance();
+        EditText Profile_Name = findViewById(R.id.edit_profile_Name);
+        EditText Change_AdminEmail = findViewById(R.id.edit_profile_Email);
+        EditText Change_AdminPassword = findViewById(R.id.edit_profile_Password);
+        EditText Change_ProfilePositon = findViewById(R.id.edit_profile_Job);
+        Auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        userID = auth.getCurrentUser().getUid();
-        adminProfileImage = findViewById(R.id.profile_image);
-        addProfileImage = findViewById(R.id.floatingCameraIcon);
-        saveEditButton = findViewById(R.id.save_btn);
-        backButton = findViewById(R.id.edit_profile_back_btn);
-        deleteUserButton = findViewById(R.id.delete_btn);
+        userID = Auth.getCurrentUser().getUid();
+        admin_profile_image = findViewById(R.id.profile_image);
+        ImageButton add_profile_image = findViewById(R.id.floatingCameraIcon);
+        Button SaveEditButton = findViewById(R.id.save_btn);
+        TextView BackButton = findViewById(R.id.edit_profile_back_btn);
+
+        deleteUserButton = findViewById(R.id.payslip_delete);
         storageReference = FirebaseStorage.getInstance().getReference();
-    }
-
-    private void setupProfileImage() {
-        StorageReference profileRef = storageReference.child("users/" + userID + "/profile.jpg");
-        profileRef.getDownloadUrl().addOnSuccessListener(uri -> Picasso.get().load(uri).into(adminProfileImage));
-    }
-
-    private void setupProfileSnapshotListener() {
-        DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.addSnapshotListener(this, (snapshot, error) -> {
-            if (snapshot != null) {
-                documentSnapshot = snapshot;
-                profileName.setText(snapshot.getString("fullname"));
-                changeAdminEmail.setText(snapshot.getString("email"));
-                changeProfilePosition.setText(snapshot.getString("position"));
+        StorageReference profileref = storageReference.child("users/" + Auth.getCurrentUser().getUid() + "/profile.jpg");
+        profileref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri).into(admin_profile_image);
             }
         });
-    }
-
-    private void setupSaveEditButtonListener() {
-        saveEditButton.setOnClickListener(v -> {
-            String newEmail = changeAdminEmail.getText().toString();
-            String newPassword = changeAdminPassword.getText().toString();
-            String newPosition = changeProfilePosition.getText().toString();
-
-            if (isEmailChanged(newEmail)) {
-                updateEmail(newEmail);
-            }
-
-            if (isPasswordValid(newPassword)) {
-                updatePassword(newPassword);
-            }
-
-            if (isPositionChanged(newPosition)) {
-                updatePosition(newPosition);
-            }
-
-            navigateToProfilePageFunction();
-        });
-    }
-
-    private boolean isEmailChanged(String newEmail) {
-        return !newEmail.equals(documentSnapshot.getString("email"));
-    }
-
-    private void updateEmail(String newEmail) {
-        if (isValidEmail(newEmail)) {
-            FirebaseUser user = auth.getCurrentUser();
-            if (user != null) {
-                user.updateEmail(newEmail).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        showToast("Email Updated Successfully");
-                        updateFirestoreEmail(newEmail);
-                    } else {
-                        showToast("Failed to Update Email");
-                    }
-                });
-            }
-        } else {
-            changeAdminEmail.setError("Invalid email format.");
-        }
-    }
-
-    private void updateFirestoreEmail(String newEmail) {
         DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.update("email", newEmail);
-    }
-
-    private boolean isPasswordValid(String password) {
-        return !TextUtils.isEmpty(password) && password.length() >= 6 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
-    }
-
-    private void updatePassword(String newPassword) {
-        FirebaseUser user = auth.getCurrentUser();
-        if (user != null) {
-            user.updatePassword(newPassword).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    showToast("Password changed successfully!");
-                } else {
-                    showToast("Failed to change password: " + task.getException().getMessage());
+        documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException error) {
+                if (snapshot != null) {
+                    documentSnapshot = snapshot;
+                    Profile_Name.setText(snapshot.getString("fullName"));
+                    Change_AdminEmail.setText(snapshot.getString("email"));
+                    Change_ProfilePositon.setText(snapshot.getString("position"));
                 }
-            });
-        }
-    }
-
-    private boolean isPositionChanged(String newPosition) {
-        return !newPosition.equals(documentSnapshot.getString("position"));
-    }
-
-    private void updatePosition(String newPosition) {
-        DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.update("position", newPosition).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                showToast("Position Updated");
-            } else {
-                showToast("Position Failed to Update");
             }
         });
-    }
 
-    private void navigateToProfilePageFunction() {
-        Intent intent = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-        startActivity(intent);
-    }
+        SaveEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String GetNewEmail = Change_AdminEmail.getText().toString();
+                String GetNewPassword = Change_AdminPassword.getText().toString();
+                String GetNewPosition = Change_ProfilePositon.getText().toString();
 
-    private void setupBackButtonListener() {
-        backButton.setOnClickListener(v -> showDialog());
-    }
+                    if (isValidEmail(GetNewEmail)) {
+                        FirebaseUser user = Auth.getCurrentUser();
+                        if (user != null) {
+                            user.updateEmail(GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(Edit_Profilepage.this, "Email Updated Successfully", Toast.LENGTH_SHORT).show();
+                                        documentReference.update("email", GetNewEmail);
+                                    } else {
+                                        Toast.makeText(Edit_Profilepage.this, "Failed to Update Email", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
+                    } else {
+                        Change_AdminEmail.setError("Invalid email format.");
+                    }
 
-    private void setupDeleteUserButtonListener() {
-        deleteUserButton.setOnClickListener(v -> showDeleteDialog());
-    }
+                if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
+                    FirebaseUser user = Auth.getCurrentUser();
+                    if (user != null) {
+                        String email = user.getEmail();
+                        user.updatePassword(GetNewPassword)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Auth.signOut();
+                                            Toast.makeText(Edit_Profilepage.this,
+                                                    "Password changed successfully! Please log in again.",
+                                                    Toast.LENGTH_SHORT).show();
 
-    private void setupAddProfileImageButtonListener() {
-        addProfileImage.setOnClickListener(v -> openGallery());
-    }
+                                            Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
+                                            GoToLoginPage.putExtra("email", email); // Pass the email to the login activity
+                                            startActivity(GoToLoginPage);
+                                            finish(); 
+                                        } else {
+                                            Toast.makeText(Edit_Profilepage.this,
+                                                    "Failed to change password: " + task.getException().getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                    }
+                }
 
-    private void showDeleteDialog() {
-        dialog = createDialog(R.layout.delete_dialog);
-        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
-        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
 
-        btnDialogYes.setOnClickListener(v -> {
-            deleteUser();
-            dialog.dismiss();
+                if (!GetNewPosition.equals(documentSnapshot.getString("position"))) {
+                    documentReference.update("position", GetNewPosition).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(Edit_Profilepage.this, "Position Updated", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(Edit_Profilepage.this, "Position Failed to Update", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    });
+                }
+                Intent GotoProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(GotoProfilePageFunction);
+            }
         });
 
-        btnDialogNo.setOnClickListener(v -> dialog.dismiss());
+        BackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDialog();
+            }
+        });
 
-        dialog.show();
+
+        deleteUserButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ShowDeleteDialog();
+
+            }
+        });
+
+        add_profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent OpenGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(OpenGallery, 1000);
+
+            }
+        });
+
     }
 
-    private Dialog createDialog(int layoutId) {
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(layoutId);
+    private void ShowDeleteDialog() {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.delete_dialog);
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
         dialog.setCancelable(false);
-        return dialog;
+        btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
+        btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
+
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteUser();
+                dialog.dismiss();
+            }
+        });
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
-    private void deleteUser() {
-        FirebaseUser user = auth.getCurrentUser();
+    private void DeleteUser() {
+        FirebaseUser user = Auth.getCurrentUser();
         if (user != null) {
-            user.delete().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    deleteUserFromFirestore();
-                } else {
-                    showToast("Failed to Delete");
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userDocRef = db.collection("users").document(user.getUid());
+            userDocRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        // If Firestore document deletion is successful, proceed to delete the user
+                        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Auth.signOut();
+                                    Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
+                                    startActivity(GoToLoginPage);
+                                    Toast.makeText(Edit_Profilepage.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Edit_Profilepage.this, "Failed to Delete Account", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(Edit_Profilepage.this, "Failed to Delete Data", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
     }
 
-    private void deleteUserFromFirestore() {
-        DocumentReference documentReference = db.collection("users").document(userID);
-        documentReference.delete().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                navigateToLoginPage();
-                showToast("Account Deleted");
-            } else {
-                showToast("Failed to Delete");
-            }
-        });
-    }
 
-    private void navigateToLoginPage() {
-        Intent intent = new Intent(Edit_Profilepage.this, MainActivity.class);
-        startActivity(intent);
-    }
 
-    private void showDialog() {
-        dialog = createDialog(R.layout.cancel_dialog);
+    private void ShowDialog() {
+
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.cancel_dialog);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.white_bg));
+        dialog.setCancelable(false);
         btnDialogNo = dialog.findViewById(R.id.btnDialogNo);
         btnDialogYes = dialog.findViewById(R.id.btnDialogYes);
 
-        btnDialogYes.setOnClickListener(v -> {
-            navigateToProfilePageFunction();
-            dialog.dismiss();
+
+        btnDialogYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent BackToProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                startActivity(BackToProfilePageFunction);
+                dialog.dismiss();
+            }
         });
 
-        btnDialogNo.setOnClickListener(v -> dialog.dismiss());
 
+        btnDialogNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         dialog.show();
-    }
-
-    private void openGallery() {
-        Intent openGalleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(openGalleryIntent, 1000);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1000 && resultCode == Activity.RESULT_OK && data != null) {
-            Uri imageUri = data.getData();
-            uploadImageToFirebaseStorage(imageUri);
+        if (requestCode == 1000){
+            if (resultCode == Activity.RESULT_OK){
+                Uri imageUri = data.getData();
+                uploadImageToFirebaseStorage(imageUri);
+            }
+
         }
     }
 
     private void uploadImageToFirebaseStorage(Uri imageUri) {
-        StorageReference fileRef = storageReference.child("users/" + userID + "/profile.jpg");
-        fileRef.putFile(imageUri).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                getDownloadUrlAndSave(fileRef);
-            } else {
-                showToast("Upload Failed: " + task.getException().getMessage());
-            }
-        });
-    }
-
-    private void getDownloadUrlAndSave(StorageReference fileRef) {
-        fileRef.getDownloadUrl().addOnCompleteListener(uriTask -> {
-            if (uriTask.isSuccessful()) {
-                Uri uri = uriTask.getResult();
-                Picasso.get().load(uri).into(adminProfileImage);
-                saveImageUrlToFirestore(uri.toString());
-            } else {
-                showToast("Failed to get download URL");
-            }
-        });
+        StorageReference fileref = storageReference.child("users/" + Auth.getCurrentUser().getUid() + "/profile.jpg");
+        fileref.putFile(imageUri)
+                .addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            fileref.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Uri> uriTask) {
+                                    if (uriTask.isSuccessful()) {
+                                        Uri uri = uriTask.getResult();
+                                        Picasso.get().load(uri).into(admin_profile_image);
+                                        saveImageUrlToFirestore(uri.toString());
+                                    } else {
+                                        Toast.makeText(Edit_Profilepage.this, "Failed to get download URL", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(Edit_Profilepage.this, "Upload Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void saveImageUrlToFirestore(String imageUrl) {
         DocumentReference userRef = db.collection("users").document(userID);
-        userRef.update("profileImageUrl", imageUrl).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                showToast("Image URL saved");
-            } else {
-                showToast("Failed to save Image URL");
+        userRef.update("profileImageUrl", imageUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()){
+                    Toast.makeText(Edit_Profilepage.this, "Image URL saved", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(Edit_Profilepage.this, "Failed to save Image URL", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
+    }
+
+    private boolean isValidPassword(String password) {
+        return password.length() >= 6 && password.matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]+$");
     }
 
     private boolean isValidEmail(String email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private void showToast(String message) {
-        Toast.makeText(Edit_Profilepage.this, message, Toast.LENGTH_SHORT).show();
+    @Override
+    public void finish() {
+        super.finish();
     }
 }
