@@ -14,6 +14,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class NewAdapter extends FirestoreRecyclerAdapter<PayModel, NewAdapter.holder> {
+
+    private OnDataChangedListener onDataChangedListener;
     public NewAdapter(@NonNull FirestoreRecyclerOptions<PayModel> options) {
         super(options);
     }
@@ -48,6 +50,21 @@ public class NewAdapter extends FirestoreRecyclerAdapter<PayModel, NewAdapter.ho
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_data2, parent, false);
         return new holder(view);
+    }
+    @Override
+    public void onDataChanged() {
+        super.onDataChanged();
+        if (onDataChangedListener != null) {
+            onDataChangedListener.onDataChanged(getItemCount());
+        }
+    }
+
+    public void setOnDataChangedListener(OnDataChangedListener listener) {
+        this.onDataChangedListener = listener;
+    }
+
+    public interface OnDataChangedListener {
+        void onDataChanged(int itemCount);
     }
 
     static class holder extends RecyclerView.ViewHolder {

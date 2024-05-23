@@ -17,6 +17,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ViewPayslip extends AppCompatActivity {
     private TextView payslip, payslip_name, payslip_email, payslip_dept, payslip_status, payslip_earnings
             , payslip_deduction, payslip_net_salary;
@@ -51,7 +55,6 @@ public class ViewPayslip extends AppCompatActivity {
             deduction = intent.getStringExtra("TotalDeduction");
             netpay = intent.getStringExtra("NetPay");
             payslipTitle = intent.getStringExtra("PayrollTitle");
-            documentId = intent.getStringExtra("DocumentId");
 
             payslip.setText(payslipTitle);
             payslip_name.setText(fullName);
@@ -64,7 +67,8 @@ public class ViewPayslip extends AppCompatActivity {
         }
 
         db = FirebaseFirestore.getInstance();
-        payslipRef = db.collection("payroll").document(fullName);
+        String documentId  = fullName + getCurrentDate();
+        payslipRef = db.collection("payslips").document(documentId);
 
         delete_payslip.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,5 +90,10 @@ public class ViewPayslip extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String getCurrentDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(new Date());
     }
 }

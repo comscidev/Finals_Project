@@ -1,4 +1,5 @@
 
+
 package com.example.mobilepayroll;
 
 import android.app.Activity;
@@ -79,7 +80,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                                 @Nullable FirebaseFirestoreException error) {
                 if (snapshot != null) {
                     documentSnapshot = snapshot;
-                    Profile_Name.setText(snapshot.getString("fullname"));
+                    Profile_Name.setText(snapshot.getString("fullName"));
                     Change_AdminEmail.setText(snapshot.getString("email"));
                     Change_ProfilePositon.setText(snapshot.getString("position"));
                 }
@@ -93,8 +94,6 @@ public class Edit_Profilepage extends AppCompatActivity {
                 String GetNewPassword = Change_AdminPassword.getText().toString();
                 String GetNewPosition = Change_ProfilePositon.getText().toString();
 
-                boolean emailChanged = !GetNewEmail.equals(documentSnapshot.getString("email"));
-                if (emailChanged) {
                     if (isValidEmail(GetNewEmail)) {
                         FirebaseUser user = Auth.getCurrentUser();
                         if (user != null) {
@@ -113,19 +112,25 @@ public class Edit_Profilepage extends AppCompatActivity {
                     } else {
                         Change_AdminEmail.setError("Invalid email format.");
                     }
-                }
 
                 if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
                     if (user != null) {
+                        String email = user.getEmail();
                         user.updatePassword(GetNewPassword)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
+                                            Auth.signOut();
                                             Toast.makeText(Edit_Profilepage.this,
-                                                    "Password changed successfully!",
+                                                    "Password changed successfully! Please log in again.",
                                                     Toast.LENGTH_SHORT).show();
+
+                                            Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
+                                            GoToLoginPage.putExtra("email", email); // Pass the email to the login activity
+                                            startActivity(GoToLoginPage);
+                                            finish(); 
                                         } else {
                                             Toast.makeText(Edit_Profilepage.this,
                                                     "Failed to change password: " + task.getException().getMessage(),
@@ -135,6 +140,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                                 });
                     }
                 }
+
 
                 if (!GetNewPosition.equals(documentSnapshot.getString("position"))) {
                     documentReference.update("position", GetNewPosition).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -210,23 +216,35 @@ public class Edit_Profilepage extends AppCompatActivity {
     private void DeleteUser() {
         FirebaseUser user = Auth.getCurrentUser();
         if (user != null) {
-            user.delete();
-            DocumentReference documentReference = db.collection("users").document(userID);
-            documentReference.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userDocRef = db.collection("users").document(user.getUid());
+            userDocRef.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-                        Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
-                        startActivity(GoToLoginPage);
-                        Toast.makeText(Edit_Profilepage.this, "Account Deleted", Toast.LENGTH_SHORT).show();
-                    }else{
-                        Toast.makeText(Edit_Profilepage.this, "Failed to Delete", Toast.LENGTH_SHORT).show();
+                    if (task.isSuccessful()) {
+                        // If Firestore document deletion is successful, proceed to delete the user
+                        user.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Auth.signOut();
+                                    Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
+                                    startActivity(GoToLoginPage);
+                                    Toast.makeText(Edit_Profilepage.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(Edit_Profilepage.this, "Failed to Delete Account", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(Edit_Profilepage.this, "Failed to Delete Data", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
         }
     }
+
+
 
     private void ShowDialog() {
 
@@ -319,4 +337,8 @@ public class Edit_Profilepage extends AppCompatActivity {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+    }
 }

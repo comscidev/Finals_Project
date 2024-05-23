@@ -13,14 +13,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PayslipDisplay extends AppCompatActivity {
 
     TextView nameTextView, designationTextView, displayStatus, displayEmail, displayEarnings,
             displayDeductions, displayNet, payslipTitle;
-    Button sendEmailButton, deleteButton;
+    Button sendEmailButton;
 
     private FirebaseFirestore db;
 
@@ -35,15 +38,14 @@ public class PayslipDisplay extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.payslip_name);
         designationTextView = findViewById(R.id.payslip_dept);
-        displayStatus = findViewById(R.id.payslip_status);
         displayEmail = findViewById(R.id.payslip_email);
         displayEarnings = findViewById(R.id.payslip_earnings);
         displayDeductions = findViewById(R.id.payslip_deduction);
         displayNet = findViewById(R.id.payslip_netpay);
         payslipTitle = findViewById(R.id.payslip_title);
+        displayStatus = findViewById(R.id.display_status);
 
         sendEmailButton = findViewById(R.id.sendEmail_btn);
-        deleteButton = findViewById(R.id.payslip_delete);
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -65,36 +67,46 @@ public class PayslipDisplay extends AppCompatActivity {
             displayDeductions.setText(deductions);
             displayNet.setText(netPay);
 
-            sendEmailButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    saveToFirestoreAndSendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay);
-                }
-            });
+            sendEmailButton.setOnClickListener(v -> saveToFirestoreAndSendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay));
         }
     }
 
     private void saveToFirestoreAndSendEmail(String email, String payrollTitle, String name, String designation, String earnings, String deductions, String netPay) {
-        // Save to Firestore
-        Map<String, Object> payslipData = new HashMap<>();
-        payslipData.put("FullName", name);
-        payslipData.put("Department", designation);
-        payslipData.put("Email", email);
-        payslipData.put("Status", displayStatus.getText().toString()); // Assuming displayStatus is a TextView
-        payslipData.put("PayrollTitle", payrollTitle);
-        payslipData.put("TotalEarnings", earnings);
-        payslipData.put("TotalDeduction", deductions);
-        payslipData.put("NetPay", netPay);
+        // Check if a payroll for the employee on the current day already exists
+        String documentId = name + getCurrentDate();
+        DocumentReference payrollRef = db.collection("payslips").document(documentId);
+        payrollRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Toast.makeText(this, "A payroll for this employee already exists today", Toast.LENGTH_SHORT).show();
+            } else {
+                // Save to Firestore
+                Map<String, Object> payslipData = new HashMap<>();
+                payslipData.put("FullName", name);
+                payslipData.put("Department", designation);
+                payslipData.put("Email", email);
+                payslipData.put("Status", displayStatus.getText().toString());
+                payslipData.put("PayrollTitle", payrollTitle);
+                payslipData.put("TotalEarnings", earnings);
+                payslipData.put("TotalDeduction", deductions);
+                payslipData.put("NetPay", netPay);
 
-       DocumentReference payrollRef = db.collection("payroll").document(name);
-        payrollRef.set(payslipData).addOnSuccessListener(documentReference -> {
-                    // Document saved successfully, now send the email
+                payrollRef.set(payslipData).addOnSuccessListener(documentReference -> {
                     sendEmail(email, payrollTitle, name, designation, earnings, deductions, netPay);
-                })
-                .addOnFailureListener(e -> {
+                }).addOnFailureListener(e -> {
                     // Handle failure to save to Firestore
                     Toast.makeText(this, "Failed to save payslip data", Toast.LENGTH_SHORT).show();
                 });
+            }
+        }).addOnFailureListener(e -> {
+            // Handle failure to check existing payroll
+            Toast.makeText(this, "Failed to check existing payroll", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+
+    private String getCurrentDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return dateFormat.format(new Date());
     }
 
     private void sendEmail(String email, String payrollTitle, String name, String designation, String earnings, String deductions, String netPay) {

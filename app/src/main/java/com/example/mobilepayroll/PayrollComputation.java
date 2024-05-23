@@ -1,3 +1,4 @@
+
 package com.example.mobilepayroll;
 
 import android.app.Dialog;
@@ -37,7 +38,7 @@ public class PayrollComputation extends AppCompatActivity {
 
     private EditText  Emp_Total_Days, Emp_TotalWeeks, Emp_AdditionalPayment, Emp_SpecialAllowance,
 
-            Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
+    Emp_Tax, Emp_SSS, Emp_PHealth, Emp_PagIbig, Emp_CashAdvance, Emp_MealAllowance, Emp_Shop;
 
     private Button Savebtn;
 
@@ -86,7 +87,7 @@ public class PayrollComputation extends AppCompatActivity {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String currentDate = dateFormat.format(new Date());
-        Payroll_Tittle.setText("Payslip date for - " + currentDate);
+        Payroll_Tittle.setText("Payroll Title - " + currentDate);
 
         Intent intent = getIntent();
         if (intent != null) {
