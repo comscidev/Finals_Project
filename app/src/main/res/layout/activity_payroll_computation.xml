@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:text="Payroll Computation"
                     android:textColor="@color/black"
-                    android:textSize="25sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"

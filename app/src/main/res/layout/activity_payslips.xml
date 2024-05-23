@@ -27,7 +27,7 @@
             android:ems="10"
             android:text="Payslip List"
             android:textColor="@color/black"
-            android:textSize="25sp"
+            android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

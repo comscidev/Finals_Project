@@ -96,6 +96,7 @@ public class Profilepage_function extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotoEditProfilePage = new Intent(Profilepage_function.this, Edit_Profilepage.class);
                 startActivity(gotoEditProfilePage);
+                finish();
             }
         });
 
@@ -134,6 +135,7 @@ public class Profilepage_function extends AppCompatActivity {
             public void onClick(View v) {
                 Intent gotoEmployeeList = new Intent(Profilepage_function.this, EmployeeList.class);
                 startActivity(gotoEmployeeList);
+                finish();
             }
         });
     }

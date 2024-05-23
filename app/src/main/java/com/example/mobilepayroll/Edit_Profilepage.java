@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.telephony.TelephonyCallback;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,8 @@ public class Edit_Profilepage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profilepage);
-        EditText Profile_Name = findViewById(R.id.edit_profile_Name);
-        EditText Change_AdminEmail = findViewById(R.id.edit_profile_Email);
+        TextView Profile_Name = findViewById(R.id.edit_profile_Name);
+        TextView Change_AdminEmail = findViewById(R.id.edit_profile_Email);
         EditText Change_AdminPassword = findViewById(R.id.edit_profile_Password);
         EditText Change_ProfilePositon = findViewById(R.id.edit_profile_Job);
         Auth = FirebaseAuth.getInstance();
@@ -90,28 +91,8 @@ public class Edit_Profilepage extends AppCompatActivity {
         SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String GetNewEmail = Change_AdminEmail.getText().toString();
                 String GetNewPassword = Change_AdminPassword.getText().toString();
                 String GetNewPosition = Change_ProfilePositon.getText().toString();
-
-                    if (isValidEmail(GetNewEmail)) {
-                        FirebaseUser user = Auth.getCurrentUser();
-                        if (user != null) {
-                            user.updateEmail(GetNewEmail).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(Edit_Profilepage.this, "Email Updated Successfully", Toast.LENGTH_SHORT).show();
-                                        documentReference.update("email", GetNewEmail);
-                                    } else {
-                                        Toast.makeText(Edit_Profilepage.this, "Failed to Update Email", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    } else {
-                        Change_AdminEmail.setError("Invalid email format.");
-                    }
 
                 if (!TextUtils.isEmpty(GetNewPassword) && isValidPassword(GetNewPassword)) {
                     FirebaseUser user = Auth.getCurrentUser();
@@ -147,6 +128,9 @@ public class Edit_Profilepage extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                Intent GotoProfilePageFuction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
+                                startActivity(GotoProfilePageFuction);
+                                finish();
                                 Toast.makeText(Edit_Profilepage.this, "Position Updated", Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(Edit_Profilepage.this, "Position Failed to Update", Toast.LENGTH_SHORT).show();
@@ -155,8 +139,6 @@ public class Edit_Profilepage extends AppCompatActivity {
                         }
                     });
                 }
-                Intent GotoProfilePageFunction = new Intent(Edit_Profilepage.this, Profilepage_function.class);
-                startActivity(GotoProfilePageFunction);
             }
         });
 
@@ -231,6 +213,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                                     Intent GoToLoginPage = new Intent(Edit_Profilepage.this, MainActivity.class);
                                     startActivity(GoToLoginPage);
                                     Toast.makeText(Edit_Profilepage.this, "Account Deleted", Toast.LENGTH_SHORT).show();
+                                    finish();
                                 } else {
                                     Toast.makeText(Edit_Profilepage.this, "Failed to Delete Account", Toast.LENGTH_SHORT).show();
                                 }

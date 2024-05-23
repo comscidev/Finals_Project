@@ -26,9 +26,9 @@
                 android:id="@+id/greetings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome Admin,"
+                android:text="@string/greetings"
                 android:textColor="@color/black"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,9 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:hint="Wes Fesley"
+                android:hint="@string/hint_admin"
                 android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textSize="22sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@id/greetings"
                 app:layout_constraintTop_toTopOf="@id/greetings" />
@@ -50,9 +50,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
                 android:ems="10"
-                android:text="Employee List"
+                android:text="@string/dashboard_title1"
                 android:textColor="@color/black"
-                android:textSize="25sp"
+                android:textSize="27sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="All"
+                android:text="@string/categorise1"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -130,7 +130,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Admin"
+                android:text="@string/categorise2"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Production"
+                android:text="@string/categorise3"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -168,7 +168,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Support"
+                android:text="@string/categorise4"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
@@ -187,7 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Logistics"
+                android:text="@string/categorise5"
                 android:textAlignment="center"
                 android:textColor="@color/black"
                 android:textSize="14sp" />
