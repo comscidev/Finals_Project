@@ -88,9 +88,13 @@ public class Edit_Profilepage extends AppCompatActivity {
             }
         });
 
+
+
         SaveEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+              //  String GetNewEmail = Change_AdminEmail.getText().toString();
                 String GetNewPassword = Change_AdminPassword.getText().toString();
                 String GetNewPosition = Change_ProfilePositon.getText().toString();
 
@@ -139,6 +143,7 @@ public class Edit_Profilepage extends AppCompatActivity {
                         }
                     });
                 }
+
             }
         });
 

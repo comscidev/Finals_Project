@@ -107,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 password_reset.setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // User clicked No button
                     }
                 });
                 password_reset.create().show();

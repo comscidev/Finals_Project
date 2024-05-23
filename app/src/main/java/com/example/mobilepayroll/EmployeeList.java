@@ -147,6 +147,7 @@ public class EmployeeList extends AppCompatActivity {
             public void onClick(View v) {
                 Intent GoToAddEmployeeList = new Intent(EmployeeList.this, AddEmployeeActivity.class);
                 startActivity(GoToAddEmployeeList);
+                finish();
             }
         });
     }

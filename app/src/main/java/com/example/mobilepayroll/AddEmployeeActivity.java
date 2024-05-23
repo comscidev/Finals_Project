@@ -76,6 +76,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
                 intent.putExtra("BasicPay", getBasicPay);
                 intent.putExtra("Status",getEmpStatus);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -111,6 +112,7 @@ public class AddEmployeeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent BackToEmployeeListPageFunction = new Intent(AddEmployeeActivity.this, EmployeeList.class);
                 startActivity(BackToEmployeeListPageFunction);
+                finish();
                 dialog.dismiss();
             }
         });

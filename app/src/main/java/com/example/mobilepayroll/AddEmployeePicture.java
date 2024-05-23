@@ -106,6 +106,7 @@ public class AddEmployeePicture extends AppCompatActivity {
                         Toast.makeText(AddEmployeePicture.this, "Employee Added Successfully", Toast.LENGTH_SHORT).show();
                         Intent intent1 = new Intent(AddEmployeePicture.this, EmployeeList.class);
                         startActivity(intent1);
+                        finish();
                     }else {
                         Toast.makeText(AddEmployeePicture.this, "Failed to Add Employee", Toast.LENGTH_SHORT).show();
                     }
