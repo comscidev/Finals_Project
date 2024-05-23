@@ -25,7 +25,7 @@ public class Payslips extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payslips);
-
+            // Get Firestore
         db = FirebaseFirestore.getInstance();
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setSelectedItemId(R.id.bottom_payslip);
