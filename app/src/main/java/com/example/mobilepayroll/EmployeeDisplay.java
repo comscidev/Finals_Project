@@ -143,6 +143,7 @@ public class EmployeeDisplay extends AppCompatActivity {
         goToPayroll.putExtra("email", email);
         goToPayroll.putExtra("status", status);
         startActivity(goToPayroll);
+        finish();
     }
 
     private void deleteEmployee() {
